@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">AFreeCar</string>
-    <string name="action_settings">Settings</string>
+    <string name="app_name">QrCodeCamera</string>
+    <string name="result_text_default">Please focus camera to QR Code</string>
 </resources>
