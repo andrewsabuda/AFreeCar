@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     Button confirmResult;
     public final String[] kitOneRequirements = { "1,2" };
     final int RequestCameraPermissionID = 1001;
+    //Sean test push
 
 
     @Override
