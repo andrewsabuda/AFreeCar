@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">QrCodeCamera</string>
     <string name="result_text_default">Please focus camera to QR Code</string>
+    <string name="confirm_text">Go to assembly checklist</string>
+    <string name="kit_id">Kit ID will appear here</string>
+    <string name="reset_text">Reset Assembly Guide</string>
 </resources>

@@ -27,4 +27,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <Button
+        android:text="@string/confirm_text"
+        android:id="@+id/confirmResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtResult"
+        android:visibility="invisible" />
+
+    <Button
+        android:text="@string/reset_text"
+        android:id="@+id/reset"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/confirmResult"
+        />
+
 </RelativeLayout>

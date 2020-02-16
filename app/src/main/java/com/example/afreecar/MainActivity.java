@@ -2,13 +2,17 @@ package com.example.afreecar;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     TextView txtResult;
     BarcodeDetector barcodeDetector;
     CameraSource cameraSource;
+    Button confirmResult;
+    public final String[] kitOneRequirements = { "1,2" };
     final int RequestCameraPermissionID = 1001;
 
 
@@ -54,15 +60,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        cameraPreview = (SurfaceView) findViewById(R.id.cameraPreview);
-        txtResult = (TextView) findViewById(R.id.txtResult);
+        cameraPreview = findViewById(R.id.cameraPreview);
+        txtResult = findViewById(R.id.txtResult);
+        confirmResult = findViewById(R.id.confirmResult);
+
+        final Intent assembleIntent = getIntent();
+        final boolean isAssembling = assembleIntent.getBooleanExtra("isAssembling", false);
 
         barcodeDetector = new BarcodeDetector.Builder(this)
                 .setBarcodeFormats(Barcode.QR_CODE)
                 .build();
         cameraSource = new CameraSource
                 .Builder(this, barcodeDetector)
-                .setRequestedPreviewSize(640, 480)
+                .setRequestedPreviewSize(640, 640)
                 .build();
         //Add Event
         cameraPreview.getHolder().addCallback(new SurfaceHolder.Callback() {
@@ -104,19 +114,57 @@ public class MainActivity extends AppCompatActivity {
                 final SparseArray<Barcode> qrcodes = detections.getDetectedItems();
                 if(qrcodes.size() != 0)
                 {
-                    txtResult.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            //Create vibrate
-                            Vibrator vibrator = (Vibrator)getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
-                            vibrator.vibrate(1000);
-                            System.out.println("qr code read");
+                    if(!isAssembling) {
+                        txtResult.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                final Intent intent = new Intent(MainActivity.this, RequirementsActivity.class);
 
-                            //THIS IS WHERE THE QR CODE IS BEING READ AND TRANSLATED
-                            //  It is setting the text as the value that has been read.
-                            txtResult.setText(qrcodes.valueAt(0).displayValue);
-                        }
-                    });
+                                //Create vibrate
+                                Vibrator vibrator = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+                                vibrator.vibrate(1000);
+
+                                String qrValue = qrcodes.valueAt(0).displayValue;      //THIS IS WHERE THE QR CODE IS BEING READ AND TRANSLATED
+
+
+                                if (qrValue.equals("assembly-requirements-one")) {
+                                    txtResult.setText(qrValue);
+                                    intent.putExtra("kitId", qrValue);                      //Sending the kit ID value to RequirementsActivity
+                                    intent.putExtra("kitRequirements", kitOneRequirements);    //Sending the kit requirements array
+
+                                    confirmResult.setVisibility(View.VISIBLE);
+                                    confirmResult.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            MainActivity.this.startActivity(intent);
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    } else {
+                        txtResult.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                String stepValue = assembleIntent.getStringExtra("stepValue");
+                                String[] stepsArray = stepValue.split(",");
+
+                                final Intent intent = new Intent(MainActivity.this, RequirementsActivity.class);
+
+                                //Create vibrate
+                                Vibrator vibrator = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+                                vibrator.vibrate(1000);
+
+                                String qrValue = qrcodes.valueAt(0).displayValue;      //THIS IS WHERE THE QR CODE IS BEING READ AND TRANSLATED
+
+                                if(qrValue.equals(stepsArray[0]) || qrValue.equals(stepsArray[1])){
+                                    Toast.makeText(getApplicationContext(), "CORRECT MATCH!", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "INCORRECT MATCH!", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    }
                 }
             }
         });
