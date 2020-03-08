@@ -28,7 +28,7 @@ public class RequirementsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String kitId = intent.getStringExtra("kitId");         // retrieving the kit ID from the MainActivity.
 
-        String[] kitRequirements = intent.getStringArrayExtra("kitRequirements");
+        final String[] kitRequirements = intent.getStringArrayExtra("kitRequirements");
         ArrayList<String> kitRequirementsList = new ArrayList<>(Arrays.asList(kitRequirements));    // retrieving the kit requirements
                                                                                                     // and converting to an ArrayList to set in
                                                                                                     // the ListView.
@@ -49,6 +49,8 @@ public class RequirementsActivity extends AppCompatActivity {
 
                 assembleIntent.putExtra("isAssembling", true);
                 assembleIntent.putExtra("stepValue", stepValue);
+                assembleIntent.putExtra("listPosition", position);
+                assembleIntent.putExtra("requirementsList", kitRequirements);
 
                 scanButton = findViewById(R.id.scanButton);
                 scanButton.setVisibility(View.VISIBLE);

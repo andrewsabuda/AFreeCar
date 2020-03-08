@@ -13,9 +13,9 @@
 
     <SurfaceView
         android:id="@+id/cameraPreview"
-        android:layout_centerInParent="true"
         android:layout_width="match_parent"
-        android:layout_height="480px" />
+        android:layout_height="480px"
+        android:layout_centerHorizontal="true" />
     <TextView
         android:layout_centerHorizontal="true"
         android:gravity="center_horizontal"
@@ -41,6 +41,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/confirmResult"
+        />
+
+    <Button
+        android:text="@string/go_to_guide"
+        android:id="@+id/backToGuide"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/reset"
+        android:visibility="invisible"
         />
 
 </RelativeLayout>

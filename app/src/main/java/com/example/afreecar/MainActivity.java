@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
@@ -24,6 +25,7 @@ import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,10 +34,11 @@ public class MainActivity extends AppCompatActivity {
     BarcodeDetector barcodeDetector;
     CameraSource cameraSource;
     Button confirmResult;
-    public final String[] kitOneRequirements = { "1,2" };
+    Button backToGuide;
+    public final String[] kitOneRequirements = { "1,2", "3,4", "5,6" };
+    String[] scannedValues = new String[2];
     final int RequestCameraPermissionID = 1001;
     //Sean test push
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -64,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
         cameraPreview = findViewById(R.id.cameraPreview);
         txtResult = findViewById(R.id.txtResult);
         confirmResult = findViewById(R.id.confirmResult);
+        backToGuide = findViewById(R.id.backToGuide);
 
         final Intent assembleIntent = getIntent();
         final boolean isAssembling = assembleIntent.getBooleanExtra("isAssembling", false);
@@ -127,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
 
                                 String qrValue = qrcodes.valueAt(0).displayValue;      //THIS IS WHERE THE QR CODE IS BEING READ AND TRANSLATED
 
-
                                 if (qrValue.equals("assembly-requirements-one")) {
                                     txtResult.setText(qrValue);
                                     intent.putExtra("kitId", qrValue);                      //Sending the kit ID value to RequirementsActivity
@@ -144,11 +147,14 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
                     } else {
+                        final String stepValue = assembleIntent.getStringExtra("stepValue");
+                        final String[] requirementsList = assembleIntent.getStringArrayExtra("requirementsList");
+                        final int listPosition = assembleIntent.getIntExtra("listPosition", 0);
                         txtResult.post(new Runnable() {
                             @Override
                             public void run() {
-                                String stepValue = assembleIntent.getStringExtra("stepValue");
                                 String[] stepsArray = stepValue.split(",");
+                                String valueScanned = String.valueOf('x');
 
                                 final Intent intent = new Intent(MainActivity.this, RequirementsActivity.class);
 
@@ -159,9 +165,87 @@ public class MainActivity extends AppCompatActivity {
                                 String qrValue = qrcodes.valueAt(0).displayValue;      //THIS IS WHERE THE QR CODE IS BEING READ AND TRANSLATED
 
                                 if(qrValue.equals(stepsArray[0]) || qrValue.equals(stepsArray[1])){
-                                    Toast.makeText(getApplicationContext(), "CORRECT MATCH!", Toast.LENGTH_SHORT).show();
+                                    if(qrValue.equals(stepsArray[0])){
+                                        scannedValues[0] = valueScanned;
+                                        if((Arrays.toString(scannedValues)).equals("[x, x]")){
+                                            final Toast toast = Toast.makeText(getApplicationContext(), "List item completed", Toast.LENGTH_SHORT);
+                                            toast.show();
+                                            Handler handler = new Handler();
+                                            handler.postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    toast.cancel();
+                                                }
+                                            }, 500);
+
+                                            requirementsList[listPosition] = "completed";
+                                            intent.putExtra("kitId", "assembly-requirements-one");                      //Sending the kit ID value to RequirementsActivity
+                                            intent.putExtra("kitRequirements", requirementsList);
+
+                                            backToGuide.setVisibility(View.VISIBLE);
+                                            backToGuide.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    MainActivity.this.startActivity(intent);
+                                                }
+                                            });
+                                        } else {
+                                            final Toast toast = Toast.makeText(getApplicationContext(), "CORRECT SCAN! PLEASE SCAN THE NEXT CONNECTION", Toast.LENGTH_SHORT);
+                                            toast.show();
+                                            Handler handler = new Handler();
+                                            handler.postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    toast.cancel();
+                                                }
+                                            }, 500);
+                                        }
+                                    } else {
+                                        scannedValues[1] = valueScanned;
+                                        if((Arrays.toString(scannedValues)).equals("[x, x]")){
+                                            final Toast toast = Toast.makeText(getApplicationContext(), "List item completed", Toast.LENGTH_SHORT);
+                                            toast.show();
+                                            Handler handler = new Handler();
+                                            handler.postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    toast.cancel();
+                                                }
+                                            }, 500);
+
+                                            requirementsList[listPosition] = "completed";
+                                            intent.putExtra("kitId", "assembly-requirements-one");                      //Sending the kit ID value to RequirementsActivity
+                                            intent.putExtra("kitRequirements", requirementsList);
+
+                                            backToGuide.setVisibility(View.VISIBLE);
+                                            backToGuide.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    MainActivity.this.startActivity(intent);
+                                                }
+                                            });
+                                        } else {
+                                            final Toast toast = Toast.makeText(getApplicationContext(), "CORRECT SCAN! PLEASE SCAN THE NEXT CONNECTION", Toast.LENGTH_SHORT);
+                                            toast.show();
+                                            Handler handler = new Handler();
+                                            handler.postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    toast.cancel();
+                                                }
+                                            }, 500);
+                                        }
+                                    }
                                 } else {
-                                    Toast.makeText(getApplicationContext(), "INCORRECT MATCH!", Toast.LENGTH_SHORT).show();
+                                    final Toast toast = Toast.makeText(getApplicationContext(), "WRONG SCAN", Toast.LENGTH_SHORT);
+                                    toast.show();
+                                    Handler handler = new Handler();
+                                    handler.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            toast.cancel();
+                                        }
+                                    }, 500);
                                 }
                             }
                         });
