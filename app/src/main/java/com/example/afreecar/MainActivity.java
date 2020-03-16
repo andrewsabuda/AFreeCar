@@ -35,7 +35,8 @@ public class MainActivity extends AppCompatActivity {
     CameraSource cameraSource;
     Button confirmResult;
     Button backToGuide;
-    public final String[] kitOneRequirements = { "1,2", "3,4", "5,6" };
+    public final String[] kitOneRequirements = { "1,2", "3,4", "5,6" }; // These need to be stored in the database.
+    public final String kitOneId = "assembly-requirements-one"; // This also needs to be stored in the database. Still need to implement compatibility for multiple different types of Kits. Right now, only one kit is being used.
     String[] scannedValues = new String[2];
     final int RequestCameraPermissionID = 1001;
     //Sean test push
@@ -117,9 +118,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void receiveDetections(Detector.Detections<Barcode> detections) {
                 final SparseArray<Barcode> qrcodes = detections.getDetectedItems();
-                if(qrcodes.size() != 0)
-                {
+
+                if(qrcodes.size() != 0) {
+
                     if(!isAssembling) {
+
                         txtResult.post(new Runnable() {
                             @Override
                             public void run() {
@@ -131,7 +134,8 @@ public class MainActivity extends AppCompatActivity {
 
                                 String qrValue = qrcodes.valueAt(0).displayValue;      //THIS IS WHERE THE QR CODE IS BEING READ AND TRANSLATED
 
-                                if (qrValue.equals("assembly-requirements-one")) {
+                                if (qrValue.equals(kitOneId)) {
+
                                     txtResult.setText(qrValue);
                                     intent.putExtra("kitId", qrValue);                      //Sending the kit ID value to RequirementsActivity
                                     intent.putExtra("kitRequirements", kitOneRequirements);    //Sending the kit requirements array
@@ -147,9 +151,11 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
                     } else {
+
                         final String stepValue = assembleIntent.getStringExtra("stepValue");
                         final String[] requirementsList = assembleIntent.getStringArrayExtra("requirementsList");
                         final int listPosition = assembleIntent.getIntExtra("listPosition", 0);
+
                         txtResult.post(new Runnable() {
                             @Override
                             public void run() {
@@ -164,10 +170,14 @@ public class MainActivity extends AppCompatActivity {
 
                                 String qrValue = qrcodes.valueAt(0).displayValue;      //THIS IS WHERE THE QR CODE IS BEING READ AND TRANSLATED
 
-                                if(qrValue.equals(stepsArray[0]) || qrValue.equals(stepsArray[1])){
-                                    if(qrValue.equals(stepsArray[0])){
+                                if(qrValue.equals(stepsArray[0]) || qrValue.equals(stepsArray[1])) {
+
+                                    if(qrValue.equals(stepsArray[0])) {
+
                                         scannedValues[0] = valueScanned;
-                                        if((Arrays.toString(scannedValues)).equals("[x, x]")){
+
+                                        if((Arrays.toString(scannedValues)).equals("[x, x]")) {
+
                                             final Toast toast = Toast.makeText(getApplicationContext(), "List item completed", Toast.LENGTH_SHORT);
                                             toast.show();
                                             Handler handler = new Handler();
@@ -176,10 +186,10 @@ public class MainActivity extends AppCompatActivity {
                                                 public void run() {
                                                     toast.cancel();
                                                 }
-                                            }, 500);
+                                            }, 800);
 
                                             requirementsList[listPosition] = "completed";
-                                            intent.putExtra("kitId", "assembly-requirements-one");                      //Sending the kit ID value to RequirementsActivity
+                                            intent.putExtra("kitId", kitOneId);                      //Sending the kit ID value to RequirementsActivity
                                             intent.putExtra("kitRequirements", requirementsList);
 
                                             backToGuide.setVisibility(View.VISIBLE);
@@ -190,6 +200,7 @@ public class MainActivity extends AppCompatActivity {
                                                 }
                                             });
                                         } else {
+
                                             final Toast toast = Toast.makeText(getApplicationContext(), "CORRECT SCAN! PLEASE SCAN THE NEXT CONNECTION", Toast.LENGTH_SHORT);
                                             toast.show();
                                             Handler handler = new Handler();
@@ -198,11 +209,13 @@ public class MainActivity extends AppCompatActivity {
                                                 public void run() {
                                                     toast.cancel();
                                                 }
-                                            }, 500);
+                                            }, 800);
                                         }
                                     } else {
+
                                         scannedValues[1] = valueScanned;
-                                        if((Arrays.toString(scannedValues)).equals("[x, x]")){
+
+                                        if((Arrays.toString(scannedValues)).equals("[x, x]")) {
                                             final Toast toast = Toast.makeText(getApplicationContext(), "List item completed", Toast.LENGTH_SHORT);
                                             toast.show();
                                             Handler handler = new Handler();
@@ -211,10 +224,10 @@ public class MainActivity extends AppCompatActivity {
                                                 public void run() {
                                                     toast.cancel();
                                                 }
-                                            }, 500);
+                                            }, 800);
 
                                             requirementsList[listPosition] = "completed";
-                                            intent.putExtra("kitId", "assembly-requirements-one");                      //Sending the kit ID value to RequirementsActivity
+                                            intent.putExtra("kitId", kitOneId);                      //Sending the kit ID value to RequirementsActivity
                                             intent.putExtra("kitRequirements", requirementsList);
 
                                             backToGuide.setVisibility(View.VISIBLE);
@@ -233,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
                                                 public void run() {
                                                     toast.cancel();
                                                 }
-                                            }, 500);
+                                            }, 800);
                                         }
                                     }
                                 } else {
@@ -245,7 +258,7 @@ public class MainActivity extends AppCompatActivity {
                                         public void run() {
                                             toast.cancel();
                                         }
-                                    }, 500);
+                                    }, 800);
                                 }
                             }
                         });
