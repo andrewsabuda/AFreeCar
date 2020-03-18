@@ -36,8 +36,8 @@
         android:visibility="invisible" />
 
     <Button
-        android:text="@string/reset_text"
-        android:id="@+id/reset"
+        android:text="@string/openCv_text"
+        android:id="@+id/openCv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/confirmResult"
@@ -48,7 +48,7 @@
         android:id="@+id/backToGuide"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/reset"
+        android:layout_below="@+id/openCv"
         android:visibility="invisible"
         />
 

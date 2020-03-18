@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     CameraSource cameraSource;
     Button confirmResult;
     Button backToGuide;
+    Button openCv;
     public final String[] kitOneRequirements = { "1,2", "3,4", "5,6" }; // These need to be stored in the database.
     public final String kitOneId = "assembly-requirements-one"; // This also needs to be stored in the database. Still need to implement compatibility for multiple different types of Kits. Right now, only one kit is being used.
     String[] scannedValues = new String[2];
@@ -69,6 +70,16 @@ public class MainActivity extends AppCompatActivity {
         txtResult = findViewById(R.id.txtResult);
         confirmResult = findViewById(R.id.confirmResult);
         backToGuide = findViewById(R.id.backToGuide);
+        openCv = findViewById(R.id.openCv);
+
+        final Intent intent = new Intent(MainActivity.this, OpenCv.class);
+
+        openCv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.this.startActivity(intent);
+            }
+        });
 
         final Intent assembleIntent = getIntent();
         final boolean isAssembling = assembleIntent.getBooleanExtra("isAssembling", false);
