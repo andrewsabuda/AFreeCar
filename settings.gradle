@@ -1,3 +1,6 @@
 include ':app', 'OpenCV'
 rootProject.name='AFreeCar'
 include ':java'
+def opencvsdk = './OpenCV'
+include ':opencv'
+project(':opencv').projectDir = new File(opencvsdk + '/sdk')
