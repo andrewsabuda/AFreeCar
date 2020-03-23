@@ -39,6 +39,10 @@ public class MainActivity extends AppCompatActivity {
     public final String kitOneId = "assembly-requirements-one"; // This also needs to be stored in the database. Still need to implement compatibility for multiple different types of Kits. Right now, only one kit is being used.
     String[] scannedValues = new String[2];
     final int RequestCameraPermissionID = 1001;
+    final Toast wrongScanToast = Toast.makeText(getApplicationContext(), "WRONG SCAN", Toast.LENGTH_SHORT);
+    final Toast correctScanToast = Toast.makeText(getApplicationContext(), "CORRECT SCAN! PLEASE SCAN THE NEXT CONNECTION", Toast.LENGTH_SHORT);
+    final Toast stepCompletedToast = Toast.makeText(getApplicationContext(), "List item completed", Toast.LENGTH_SHORT);
+    Handler handler = new Handler();
     //Sean test push
 
     @Override
@@ -178,13 +182,11 @@ public class MainActivity extends AppCompatActivity {
 
                                         if((Arrays.toString(scannedValues)).equals("[x, x]")) {
 
-                                            final Toast toast = Toast.makeText(getApplicationContext(), "List item completed", Toast.LENGTH_SHORT);
-                                            toast.show();
-                                            Handler handler = new Handler();
+                                            stepCompletedToast.show();
                                             handler.postDelayed(new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    toast.cancel();
+                                                    stepCompletedToast.cancel();
                                                 }
                                             }, 800);
 
@@ -201,13 +203,11 @@ public class MainActivity extends AppCompatActivity {
                                             });
                                         } else {
 
-                                            final Toast toast = Toast.makeText(getApplicationContext(), "CORRECT SCAN! PLEASE SCAN THE NEXT CONNECTION", Toast.LENGTH_SHORT);
-                                            toast.show();
-                                            Handler handler = new Handler();
+                                            correctScanToast.show();
                                             handler.postDelayed(new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    toast.cancel();
+                                                    correctScanToast.cancel();
                                                 }
                                             }, 800);
                                         }
@@ -216,13 +216,12 @@ public class MainActivity extends AppCompatActivity {
                                         scannedValues[1] = valueScanned;
 
                                         if((Arrays.toString(scannedValues)).equals("[x, x]")) {
-                                            final Toast toast = Toast.makeText(getApplicationContext(), "List item completed", Toast.LENGTH_SHORT);
-                                            toast.show();
-                                            Handler handler = new Handler();
+
+                                            stepCompletedToast.show();
                                             handler.postDelayed(new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    toast.cancel();
+                                                    stepCompletedToast.cancel();
                                                 }
                                             }, 800);
 
@@ -238,25 +237,21 @@ public class MainActivity extends AppCompatActivity {
                                                 }
                                             });
                                         } else {
-                                            final Toast toast = Toast.makeText(getApplicationContext(), "CORRECT SCAN! PLEASE SCAN THE NEXT CONNECTION", Toast.LENGTH_SHORT);
-                                            toast.show();
-                                            Handler handler = new Handler();
+                                            correctScanToast.show();
                                             handler.postDelayed(new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    toast.cancel();
+                                                    correctScanToast.cancel();
                                                 }
                                             }, 800);
                                         }
                                     }
                                 } else {
-                                    final Toast toast = Toast.makeText(getApplicationContext(), "WRONG SCAN", Toast.LENGTH_SHORT);
-                                    toast.show();
-                                    Handler handler = new Handler();
+                                    wrongScanToast.show();
                                     handler.postDelayed(new Runnable() {
                                         @Override
                                         public void run() {
-                                            toast.cancel();
+                                            wrongScanToast.cancel();
                                         }
                                     }, 800);
                                 }
