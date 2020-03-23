@@ -17,12 +17,22 @@ public class ID {
         return new ID(this.id);
     }
 
+    @Override
+    public boolean equals(Object other) {
+        return other.getClass() == ID.class && this.equals((ID) other);
+    }
+
     public boolean equals(ID other) {
         return this.id.equals(other.id);
     }
 
     @Override
-    public java.lang.String toString() {
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+    @Override
+    public String toString() {
         return id;
     }
 }

@@ -1,6 +1,5 @@
 package com.example.afreecar.model.identification;
 
-import androidx.annotation.ArrayRes;
 import androidx.annotation.NonNull;
 
 import com.example.afreecar.model.ID;
