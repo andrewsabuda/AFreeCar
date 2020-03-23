@@ -2,6 +2,7 @@ package com.example.afreecar.model.identification;
 
 import androidx.annotation.NonNull;
 
+import com.example.afreecar.model.DataAccessUtils;
 import com.example.afreecar.model.DemoStuff;
 import com.example.afreecar.model.ID;
 import com.example.afreecar.model.PartTag;
@@ -13,6 +14,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Class used to retrieve a set of parts for the input eKit ID,
+ * and then construct a collection of valid scanned QR code IDs from those sets.
+ */
 public class PartsChecker {
 
     private ID kitID;
@@ -22,7 +27,7 @@ public class PartsChecker {
     public PartsChecker(@NonNull ID kitID) {
         this.kitID = kitID;
 
-        PartRequirement[] temp = getPartRequirements(kitID);
+        PartRequirement[] temp = DataAccessUtils.getPartRequirements(kitID);
 
         validPartsMap = new HashMap<PartTag, Set<ID>>(temp.length);
         pickedPartsMap = new HashMap<PartTag, ID>(temp.length);
@@ -34,17 +39,10 @@ public class PartsChecker {
     }
 
     /**
-     * @param kitID - the ID of the kit whose requirements should be retreived.
-     * @return an array of {@code PartRequirements} for the input KitID.
+     * @return the set of part tags required for assembling the eKit, for use in displaying in UI.
      */
-    protected PartRequirement[] getPartRequirements(@NonNull ID kitID) {
-        List<PartRequirement> temp = new ArrayList<>(3);
-
-        if (kitID.equals(DemoStuff.kitID)) {
-            temp = Arrays.asList(DemoStuff.controllerReq, DemoStuff.batteryReq, DemoStuff.motorReq);
-        }
-
-        return temp.toArray(new PartRequirement[temp.size()]);
+    public Set<PartTag> getPartTags() {
+        return pickedPartsMap.keySet();
     }
 
     /**
@@ -98,7 +96,10 @@ public class PartsChecker {
         return true;
     }
 
-    protected Map<PartTag, ID> getPickedParts() {
-        return pickedPartsMap;
+    /**
+     * @return a copy of the pickedPartsMap.
+     */
+    public Map<PartTag, ID> clonePickedParts() {
+        return new HashMap<PartTag, ID>(pickedPartsMap);
     }
 }

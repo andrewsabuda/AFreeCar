@@ -4,7 +4,9 @@ import java.util.Map;
 
 public class Part {
 
-    PartType type;
-    Map<PartType, ID> terminalConnections;
-    boolean mechanicalConnection;
+    private ID id;
+    private PartType type;
+    private boolean needsMechanicalConnection;
+
+    private Map<PartType, ID> terminalConnections;
 }
