@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     String[] scannedValues = new String[2];
     final int RequestCameraPermissionID = 1001;
     //Sean test push
-
+    //Alex test push
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
