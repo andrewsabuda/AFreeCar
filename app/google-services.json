@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "930081280735",
+    "firebase_url": "https://afreecar-64320.firebaseio.com",
+    "project_id": "afreecar-64320",
+    "storage_bucket": "afreecar-64320.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:930081280735:android:01f7839221a56cf986cf6a",
+        "android_client_info": {
+          "package_name": "com.example.afreecar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "930081280735-pgd8t445js96abkj35e59q1gdctd70o5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYXQq13p23iA4sT41r65oWfHeizm6ik4I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "930081280735-pgd8t445js96abkj35e59q1gdctd70o5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
