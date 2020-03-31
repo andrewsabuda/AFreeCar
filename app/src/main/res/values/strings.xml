@@ -5,4 +5,5 @@
     <string name="kit_id">Kit ID will appear here</string>
     <string name="reset_text">Reset Assembly Guide</string>
     <string name="go_to_guide">Back To Assembly Guide</string>
+    <string name="how_to_use_qr">How to use QR</string>
 </resources>
