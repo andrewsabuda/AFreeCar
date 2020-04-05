@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
@@ -20,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -35,15 +38,26 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
+import org.opencv.core.RotatedRect;
+import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -104,22 +118,147 @@ public class MainActivity extends AppCompatActivity {
         OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION, this, mLoaderCallback);
     }
 
-    protected void onActivityResult(int requestCode,int resultCode,Intent data) {
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);//method retrieves the requestCode , its result and the data containing the pic from system
         if (requestCode == 1 && resultCode == RESULT_OK) {
             Bitmap photo = (Bitmap) data.getExtras().get("data"); //get data and casts it into Bitmap photo
 
-            Mat img1 = new Mat();
-            Utils.bitmapToMat(photo, img1);
+            Mat img = new Mat();
+            Utils.bitmapToMat(photo, img);
 
-            Mat imageGray1 = new Mat();
+            Mat imageGray = new Mat();
 
-            Imgproc.cvtColor(img1, imageGray1, Imgproc.COLOR_RGB2GRAY);
+            //load the image, convert it to grayscale, and blur it slightly
+            Imgproc.cvtColor(img, imageGray, Imgproc.COLOR_RGB2GRAY);
+            Imgproc.GaussianBlur(imageGray, imageGray, new Size(7, 7), 0);
 
-            Utils.matToBitmap(imageGray1, photo);
+            //perform edge detection, then perform a dilation + erosion to
+            //close gaps in between object edges
+            Mat edged = new Mat();
+            Imgproc.Canny(imageGray, edged, 50, 100);
+            Imgproc.dilate(edged, edged, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(2,2)));
+            Imgproc.erode(edged, edged, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(2,2)));
+
+            //find contours in the edge map
+            ArrayList<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+            Mat hierarchy = new Mat();
+            Imgproc.findContours(edged, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+            hierarchy.release();
+
+            //sort the contours from left-to-right and, then initialize the
+            //distance colors and reference object
+            sortContours(contours);
+            int[] arrayColors ={ Color.BLUE, Color.RED, Color.CYAN, Color.YELLOW, Color.MAGENTA};
+            Object refObj = new Object();
+
+            //loop over the contours individually
+            for (MatOfPoint contour : contours) {
+                List<RotatedRect> boxes = new ArrayList<>();
+
+                //if the contour is not sufficiently large, ignore it
+                if(Imgproc.contourArea(contour) < 100) {
+                    continue;
+                }
+
+                //compute the rotated bounding box of the contour
+                RotatedRect box = Imgproc.minAreaRect(new MatOfPoint2f(contour.toArray()));
+                boxes.add(box);
+
+                // Getting the vertices of the rectangle
+                List<Point[]> vertices = initialiseWithDefaultPointInstances(boxes.size(), 4);
+                for(int i=0; i<boxes.size(); i++){
+                    boxes.get(i).points(vertices.get(i));
+                }
+
+                /** With the vertices, the object size is calculated.
+                 *  The object size is calculated through pythagoras theorm. In addition, it gives
+                 *  the distance between 2 points in a bi-dimensional space.
+                 *
+                 *  For a rectangle, considering any vertex V, its two sizes (width and height) can
+                 *  be calculated by calculating the distance of V from the previous vertex and
+                 *  calculating the distance of V from the next vertex. This is the reason why I
+                 *  calculate the distance between vertici[0]/vertici[3] and vertici[0]/vertici[1]
+                 */
+                double conversionFactor = 1.0;
+                List<Integer> objectWidth = new ArrayList<>();
+                List<Integer> objectHeight = new ArrayList<>();
+                for(Point[] points : vertices){
+                    int width = (int) (conversionFactor * Math.sqrt((points[0].x - points[3].x) * (points[0].x - points[3].x) + (points[0].y - points[3].y) * (points[0].y - points[3].y)));
+                    int height = (int) (conversionFactor * Math.sqrt((points[0].x - points[1].x) * (points[0].x - points[1].x) + (points[0].y - points[1].y) * (points[0].y - points[1].y)));
+                    objectWidth.add(width);
+                    objectHeight.add(height);
+                }
+
+                /** Draw the rectangle containing the contours. The line method draws a line from 1
+                 *  point to the next, and accepts only integer coordinates; for this reason, 2
+                 *  temporary Points have been created and why I used Math.round method.
+                 */
+
+                Scalar blue = new Scalar(0, 0, 255);
+                for (int i=0; i<vertices.size(); i++){
+                    Point pt1 = new Point();
+                    Point pt2 = new Point();
+                    for (int j = 0; j < 4; j++) {
+                        pt1.x = Math.round(vertices.get(i)[j].x);
+                        pt1.y = Math.round(vertices.get(i)[j].y);
+                        pt2.x = Math.round(vertices.get(i)[(j + 1) % 4].x);
+                        pt2.y = Math.round(vertices.get(i)[(j + 1) % 4].y);
+                        Imgproc.line(img, pt1, pt2, blue, 3);
+                    }
+                    if (objectWidth.get(i) != 0 && objectHeight.get(i) != 0){
+                        Imgproc.putText(img, "width: " + objectWidth + ", height: " + objectHeight, new Point(Math.round(vertices.get(i)[1].x), Math.round(vertices.get(i)[1].y)), 1, 1, blue);
+                    }
+                }
+
+            }
+            Utils.matToBitmap(img, photo);
 
             im.setImageBitmap(photo);// set photo to imageView
         }
+    }
+
+    // Initialising an array of points
+    public static List<Point[]> initialiseWithDefaultPointInstances(int n_Contours, int n_Points) {
+        List<Point[]> pointsList = new ArrayList<>();
+        for(int i=0; i<n_Contours; i++){
+            Point[] array = new Point[n_Points];
+            for (int j = 0; j < n_Points; j++) {
+                array[j] = new Point();
+            }
+            pointsList.add(array);
+        }
+        return pointsList;
+    }
+
+    /**
+     * Sorts contours from left to right (assumes a length of 2)
+     *
+     * @param contours
+     *            List of contours to sort
+     */
+    public ArrayList sortContours(ArrayList<MatOfPoint> contours) {
+        if (getLeftMostX(contours.get(0)) > getLeftMostX(contours.get(1))) {
+            contours.add(contours.remove(0));
+        }
+
+        return contours;
+    }
+
+    /**
+     * @param points
+     *            List of points representing a contour
+     * @return The X coordinate of the left-most point in {@code points}
+     */
+    public double getLeftMostX(MatOfPoint points) {
+        List<Point> coords = points.toList();
+        double leftMostX = coords.get(0).x;
+        for (int i = 0; i < coords.size(); i++) {
+            if (coords.get(i).x < leftMostX) {
+                leftMostX = coords.get(i).x;
+            }
+        }
+        return leftMostX;
     }
 
     @Override
