@@ -18,11 +18,17 @@ import java.util.Set;
  */
 public class DataAccessUtils {
 
+    public boolean isValidKitID(@NonNull ID kitID) {
+        // Todo actual database query implementation
+        return kitID.equals(DemoStuff.kitID);
+    }
+
     /**
      * @param kitID - the ID of the kit whose requirements should be retreived.
      * @return an array of {@code PartRequirements} for the input KitID.
      */
     public static PartRequirement[] getPartRequirements(@NonNull ID kitID) {
+        // Todo actual database query implementation
         List<PartRequirement> temp = new ArrayList<>(3);
 
         if (kitID.equals(DemoStuff.kitID)) {
@@ -37,6 +43,7 @@ public class DataAccessUtils {
      * @return The {@Code PartConnectionsInfo} containing the set of terminals associated with this part
      */
     public static PartConnectionsInfo getPartConnectionInfoForID(@NonNull ID id) {
+        // Todo actual database query implementation
         boolean needsChassisConnection = true;
         Set<TerminalInfo> terminals = new HashSet<TerminalInfo>();
 
