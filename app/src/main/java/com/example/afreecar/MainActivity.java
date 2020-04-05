@@ -4,15 +4,18 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +34,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
+
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -43,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
     Button confirmResult;
     Button backToGuide;
     Button openCv;
+    ImageView im; //Your image View
+
     public final String[] kitOneRequirements = { "1,2", "3,4", "5,6" }; // These need to be stored in the database.
     public final String kitOneId = "assembly-requirements-one"; // This also needs to be stored in the database. Still need to implement compatibility for multiple different types of Kits. Right now, only one kit is being used.
     String[] scannedValues = new String[2];
@@ -68,6 +81,47 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
+        @Override
+        public void onManagerConnected(int status) {
+            switch (status) {
+                case LoaderCallbackInterface.SUCCESS:
+                {
+
+                } break;
+                default:
+                {
+                    super.onManagerConnected(status);
+                } break;
+            }
+        }
+    };
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION, this, mLoaderCallback);
+    }
+
+    protected void onActivityResult(int requestCode,int resultCode,Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);//method retrieves the requestCode , its result and the data containing the pic from system
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            Bitmap photo = (Bitmap) data.getExtras().get("data"); //get data and casts it into Bitmap photo
+
+            Mat img1 = new Mat();
+            Utils.bitmapToMat(photo, img1);
+
+            Mat imageGray1 = new Mat();
+
+            Imgproc.cvtColor(img1, imageGray1, Imgproc.COLOR_RGB2GRAY);
+
+            Utils.matToBitmap(imageGray1, photo);
+
+            im.setImageBitmap(photo);// set photo to imageView
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,13 +132,17 @@ public class MainActivity extends AppCompatActivity {
         confirmResult = findViewById(R.id.confirmResult);
         backToGuide = findViewById(R.id.backToGuide);
         openCv = findViewById(R.id.openCv);
+        im =(ImageView)findViewById(R.id.imageView);
+
 
         final Intent intent = new Intent(MainActivity.this, OpenCV.class);
 
         openCv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity.this.startActivity(intent);
+                Intent img = new Intent (); //Your Intent
+                img.setAction(MediaStore.ACTION_IMAGE_CAPTURE); //the intents action to capture the image
+                startActivityForResult(img,1);//start the activity adding any code .1 in this example
             }
         });
 
