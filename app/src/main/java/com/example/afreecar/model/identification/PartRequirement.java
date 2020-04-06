@@ -5,17 +5,20 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import com.example.afreecar.model.AbstractEquatable;
 import com.example.afreecar.model.ID;
 import com.example.afreecar.model.PartTag;
 
 import java.security.InvalidParameterException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Class to indicate a specific part required in a kit, and a list of valid part IDs that that may
  * fulfill that requirement.  Intended for use as a wrapper for data passed from the database.
  */
-public class PartRequirement implements Parcelable {
+public class PartRequirement extends AbstractEquatable<PartRequirement> implements Parcelable {
 
     private PartTag partTag;
     private Set<ID> validPartIDs;
@@ -37,6 +40,8 @@ public class PartRequirement implements Parcelable {
 
     protected PartRequirement(Parcel in) {
         partTag = in.readParcelable(PartTag.class.getClassLoader());
+
+        validPartIDs = new HashSet<ID>(Arrays.asList(in.createTypedArray(ID.CREATOR)));
     }
 
     @Override
@@ -76,5 +81,22 @@ public class PartRequirement implements Parcelable {
      */
     protected Set<ID> getValidPartIDs() {
         return validPartIDs;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return other.getClass() == PartRequirement.class
+                ? this.equals((PartRequirement) other)
+                : this == other;
+    }
+
+    @Override
+    public boolean equals(PartRequirement other) {
+        return this.partTag.equals(other.partTag) && this.validPartIDs.equals(other.validPartIDs);
+    }
+
+    @Override
+    public PartRequirement clone() {
+        return new PartRequirement(this.partTag.clone(), new HashSet<ID>(validPartIDs));
     }
 }

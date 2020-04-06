@@ -28,13 +28,18 @@ public class PartTypeTest {
     }
 
     @Test
-    public void testToAndFromParcel() {
+    public void testWriteToParcel() {
         Parcel parcel = Parcel.obtain();
-        testPartType.writeToParcel(parcel,testPartType.describeContents());
+        testPartType.writeToParcel(parcel, testPartType.describeContents());
         parcel.setDataPosition(0);
 
         PartType createdFromParcel = PartType.CREATOR.createFromParcel(parcel);
 
-        assertTrue(testPartType.toString().equals(createdFromParcel.toString()));
+        assertTrue(testPartType.equals(createdFromParcel));
+    }
+
+    @Test
+    public void testDescribeContents() {
+        assertEquals(0, testPartType.describeContents());
     }
 }

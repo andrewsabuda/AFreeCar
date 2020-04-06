@@ -5,12 +5,10 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
-import java.io.Serializable;
-
 /**
  * Wrapper class for IDs to be read from QR codes, in case we use something besides {@code String}s.
  */
-public class ID implements Parcelable, Cloneable {
+public class ID extends AbstractPerfectHashable<ID> implements Parcelable {
 
     private String id;
 
@@ -51,15 +49,6 @@ public class ID implements Parcelable, Cloneable {
     @Override
     public ID clone() {
         return new ID(this.id);
-    }
-
-    @Override
-    public boolean equals(Object other) {
-        return other.getClass() == ID.class && this.equals((ID) other);
-    }
-
-    public boolean equals(ID other) {
-        return this.id.equals(other.id);
     }
 
     @Override

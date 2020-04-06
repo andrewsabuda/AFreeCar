@@ -3,18 +3,11 @@ package com.example.afreecar.model.identification;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import androidx.annotation.NonNull;
-
-import com.example.afreecar.model.DataAccessUtils;
-import com.example.afreecar.model.DemoStuff;
 import com.example.afreecar.model.ID;
 import com.example.afreecar.model.PartTag;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,34 +15,17 @@ import java.util.Set;
  * Class used to retrieve a set of parts for the input eKit ID,
  * and then construct a collection of valid scanned QR code IDs from those sets.
  */
-public class PartsChecker implements Parcelable {
+public class PartsChecker implements Parcelable, Cloneable {
 
     private Map<PartTag, ID> pickedPartsMap;
     private Map<PartTag, Set<ID>> validPartsMap;
 
-    // Essentially only here to aid in parcelable constructor
-    private PartsChecker(int length, PartTag[] partTags, ID[] pickedIDs, ID[][] validIDSets) throws Exception {
-        if (length != partTags.length || length != pickedIDs.length || length != validIDSets.length) {
-            throw new Exception("Input array lengths must match all match length parameter");
-        }
-
-        pickedPartsMap = new HashMap<PartTag, ID>(length);
-        validPartsMap = new HashMap<PartTag, Set<ID>>(length);
-
-        for (int i = 0; i < length; i++) {
-            pickedPartsMap.put(partTags[i], pickedIDs[i]);
-
-            Set<ID> tempValidIDSet = new HashSet<ID>(length);
-            ID[] readValidIDArray = validIDSets[i];
-            for(ID validID: readValidIDArray) {
-                tempValidIDSet.add(validID);
-            }
-
-            validPartsMap.put(partTags[i], tempValidIDSet);
-        }
+    private PartsChecker(Map<PartTag, ID> pickedPartsMap, Map<PartTag, Set<ID>> validPartsMap) {
+        this.pickedPartsMap = pickedPartsMap;
+        this.validPartsMap = validPartsMap;
     }
 
-    public PartsChecker(PartRequirement[] partRequirements) {
+    public PartsChecker(PartRequirement... partRequirements) {
 
         validPartsMap = new HashMap<PartTag, Set<ID>>(partRequirements.length);
         pickedPartsMap = new HashMap<PartTag, ID>(partRequirements.length);
@@ -62,7 +38,7 @@ public class PartsChecker implements Parcelable {
 
     // BEGIN PARCELABLE IMPLEMENTATION
 
-    protected PartsChecker(Parcel in) throws Exception {
+    protected PartsChecker(Parcel in){
         int length = in.readInt();
 
         PartTag[] partTags = new PartTag[length];
@@ -75,7 +51,7 @@ public class PartsChecker implements Parcelable {
 
         int i;
         for (i = 0; i < length; i++) {
-            in.readTypedArray(validIDSets[i], ID.CREATOR);
+            validIDSets[i] = in.createTypedArray(ID.CREATOR);
         }
 
         pickedPartsMap = new HashMap<PartTag, ID>(length);
@@ -128,13 +104,7 @@ public class PartsChecker implements Parcelable {
     public static final Creator<PartsChecker> CREATOR = new Creator<PartsChecker>() {
         @Override
         public PartsChecker createFromParcel(Parcel in) {
-            try {
-                return new PartsChecker(in);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return null;
+            return new PartsChecker(in);
         }
 
         @Override
@@ -162,7 +132,14 @@ public class PartsChecker implements Parcelable {
     }
 
     /**
-     *
+     * @param partTag - The PartTag for which the set of valid part IDs should be retrieved
+     * @return the set of valid part IDs for this PartTag
+     */
+    public Set<ID> getValidParts(PartTag partTag) {
+        return validPartsMap.get(partTag);
+    }
+
+    /**
      * @param partTag - the {@code PartTag} whose respective value should be checked.
      * @return true if the input {@code PartTag} was found to have a chosen {@code ID} associated with it.
      */
@@ -210,6 +187,22 @@ public class PartsChecker implements Parcelable {
         }
 
         return true;
+    }
+
+    @Override
+    public PartsChecker clone() {
+        return new PartsChecker(new HashMap<PartTag, ID>(pickedPartsMap), new HashMap<PartTag, Set<ID>>(validPartsMap));
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return other.getClass() == PartsChecker.class
+                ? this.equals((PartsChecker) other)
+                : this == other;
+    }
+
+    public boolean equals(PartsChecker other) {
+        return this.validPartsMap.equals(other.validPartsMap) && this.pickedPartsMap.equals(other.pickedPartsMap);
     }
 
     /**

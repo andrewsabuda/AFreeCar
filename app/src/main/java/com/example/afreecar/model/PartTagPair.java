@@ -1,17 +1,16 @@
-package com.example.afreecar.model.assembly;
+package com.example.afreecar.model;
 
 import android.os.Parcel;
-
-import com.example.afreecar.model.AbstractChecklistItem;
-import com.example.afreecar.model.PartTag;
 
 /**
  * Entity indicating a required connection between two unique parts.
  */
-public class PartTagPair extends AbstractChecklistItem implements Comparable<PartTagPair> {
+public class PartTagPair extends AbstractChecklistElement<PartTagPair> {
 
     private PartTag one;
     private PartTag two;
+
+    private static int CARDINALITY = ((Double) Math.pow(PartTag.CARDINALITY, 2)).intValue();
 
     public PartTagPair(PartTag one, PartTag two) {
         super(true);
@@ -35,17 +34,21 @@ public class PartTagPair extends AbstractChecklistItem implements Comparable<Par
     // BEGIN PARCELABLE IMPLEMENTATION
 
     protected PartTagPair(Parcel in) {
-        super(true);
-        PartTag[] tags = new PartTag[2];
-        in.readTypedArray(tags, PartTag.CREATOR);
-
-        this.one = tags[0];
-        this.two = tags[1];
+        this(
+                (PartTag) in.readParcelable(PartTag.class.getClassLoader()),
+                (PartTag) in.readParcelable(PartTag.class.getClassLoader())
+        );
+//        PartTag[] tags = new PartTag[2];
+//        in.readTypedArray(tags, PartTag.CREATOR);
+//
+//        this.one = tags[0];
+//        this.two = tags[1];
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelableArray(new PartTag[] {one, two}, flags);
+        dest.writeParcelable(one, flags);
+        dest.writeParcelable(two, flags);
     }
 
     @Override
@@ -67,28 +70,18 @@ public class PartTagPair extends AbstractChecklistItem implements Comparable<Par
 
     // END PARCELABLE IMPLEMENTATION
 
-
     @Override
     public int hashCode() {
-        return (one.hashCode() * PartTag.Cardinality) + two.hashCode();
+        return (one.hashCode() * PartTag.CARDINALITY) + two.hashCode();
     }
 
     @Override
-    public boolean equals(Object other) {
-        return other.getClass() == PartTagPair.class && this.equals((PartTagPair) other);
-    }
-
-    public boolean equals(PartTagPair other) {
-        return this.hashCode() == other.hashCode();
-    }
-
-    @Override
-    public int compareTo(PartTagPair other) {
-        return this.hashCode() - other.hashCode();
+    public PartTagPair clone() {
+        return new PartTagPair(one.clone(), two.clone());
     }
 
     @Override
     public String toString() {
-        return null;
+        return one.toString() + " - " + two.toString();
     }
 }

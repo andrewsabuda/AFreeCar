@@ -11,12 +11,12 @@ import java.security.InvalidParameterException;
  * which may include multiple of the same type - which will be displayed to users when selecting parts.
  * Designed for use as a key in HashMaps as the primary front facing indexer for
  */
-public class PartTag extends AbstractChecklistItem implements Comparable<PartTag> {
+public class PartTag extends AbstractChecklistElement<PartTag> {
 
     private PartType type;
     private Byte ordinal;
 
-    public static final int Cardinality = PartType.values().length * Byte.MAX_VALUE;
+    public static final int CARDINALITY = PartType.values().length * Byte.MAX_VALUE;
 
     /**
      * @param type - the type of part being described in this tag.
@@ -104,6 +104,11 @@ public class PartTag extends AbstractChecklistItem implements Comparable<PartTag
     @Override
     public int compareTo(@NonNull PartTag other) {
         return this.hashCode() - other.hashCode();
+    }
+
+    @Override
+    public PartTag clone() {
+        return new PartTag(type, ordinal);
     }
 
     @Override

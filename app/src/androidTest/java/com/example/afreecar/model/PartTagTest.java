@@ -11,74 +11,75 @@ import static org.junit.Assert.*;
 public class PartTagTest {
 
     private PartTag testTag;
-    private static final PartType firstType = PartType.Controller;
-    private static final byte minOrdinal = 1;
+
+    private static final PartType FIRST_TYPE = PartType.Controller;
+    private static final byte MIN_ORDINAL = 1;
 
     @Before
     public void setUp() throws Exception {
-        testTag = new PartTag(firstType, minOrdinal);
+        testTag = new PartTag(FIRST_TYPE, MIN_ORDINAL);
     }
 
     @Test
     public void testGetType() {
-        assertEquals(testTag.getType(), firstType);
+        assertEquals(testTag.getType(), FIRST_TYPE);
     }
 
     @Test
     public void testGetOrdinal() {
-        Assert.assertEquals((byte) testTag.getOrdinal(), minOrdinal);
+        Assert.assertEquals((byte) testTag.getOrdinal(), MIN_ORDINAL);
     }
 
     @Test
     public void testEquals() {
-        PartTag other = new PartTag(firstType, minOrdinal);
-        assertEquals(testTag, other);
+        PartTag expected = new PartTag(FIRST_TYPE, MIN_ORDINAL);
+        assertEquals(expected, testTag);
 
-        other = new PartTag(firstType, 75);
-        assertNotEquals(testTag, other);
+        expected = new PartTag(FIRST_TYPE, MIN_ORDINAL + 1);
+        assertNotEquals(expected, testTag);
 
-        other = new PartTag(PartType.Battery, minOrdinal);
-        assertNotEquals(testTag, other);
+        expected = new PartTag(PartType.Battery, MIN_ORDINAL);
+        assertNotEquals(expected, testTag);
     }
 
     @Test
     public void testHashcode() {
-        assertEquals(testTag.hashCode(), 0);
+        assertEquals(0, testTag.hashCode());
 
-        testTag = new PartTag(firstType, Byte.MAX_VALUE);
-        assertEquals(testTag.hashCode(), Byte.MAX_VALUE - 1);
+        testTag = new PartTag(FIRST_TYPE, Byte.MAX_VALUE);
+        assertEquals(Byte.MAX_VALUE - 1, testTag.hashCode());
 
-        testTag = new PartTag(PartType.Battery, minOrdinal);
-        assertEquals(testTag.hashCode(), Byte.MAX_VALUE);
+        testTag = new PartTag(PartType.Battery, MIN_ORDINAL);
+        assertEquals(Byte.MAX_VALUE, testTag.hashCode());
 
         testTag = new PartTag(PartType.Battery, Byte.MAX_VALUE);
-        assertEquals(testTag.hashCode(), (Byte.MAX_VALUE * 2) - 1);
+        assertEquals((Byte.MAX_VALUE * 2) - 1, testTag.hashCode());
 
-        testTag = new PartTag(PartType.Motor, minOrdinal);
-        assertEquals(testTag.hashCode(), Byte.MAX_VALUE * 2);
+        testTag = new PartTag(PartType.Motor, MIN_ORDINAL);
+        assertEquals(Byte.MAX_VALUE * 2, testTag.hashCode());
 
+        // Highest value
         testTag = new PartTag(PartType.Motor, Byte.MAX_VALUE);
         assertEquals(testTag.hashCode(), (Byte.MAX_VALUE * 3) - 1);
     }
 
     @Test
     public void testCompareTo() {
-        PartTag other = new PartTag(firstType, minOrdinal);
-        assertEquals(testTag.compareTo(other), 0);
+        PartTag other = new PartTag(FIRST_TYPE, MIN_ORDINAL);
+        assertEquals(0, testTag.compareTo(other));
 
-        other = new PartTag(firstType, minOrdinal + 1);
-        assertEquals(testTag.compareTo(other), -1);
-        assertEquals(other.compareTo(testTag), 1);
+        other = new PartTag(FIRST_TYPE, MIN_ORDINAL + 1);
+        assertEquals(-1, testTag.compareTo(other));
+        assertEquals(1, other.compareTo(testTag));
 
-        other = new PartTag(PartType.Battery, minOrdinal);
-        assertEquals(testTag.compareTo(other), -Byte.MAX_VALUE);
-        assertEquals(other.compareTo(testTag), Byte.MAX_VALUE);
+        other = new PartTag(PartType.Battery, MIN_ORDINAL);
+        assertEquals(-Byte.MAX_VALUE, testTag.compareTo(other));
+        assertEquals(Byte.MAX_VALUE, other.compareTo(testTag));
     }
 
     @Test
     public void testToString() {
-        String testString = "Controller 1";
-        assertEquals(testTag.toString(), testString);
+        assertEquals("Controller 1", testTag.toString());
     }
 
     @Test
@@ -89,6 +90,11 @@ public class PartTagTest {
 
         PartTag createdFromParcel = PartTag.CREATOR.createFromParcel(parcel);
 
-        assertTrue(testTag.equals(createdFromParcel));
+        assertEquals(testTag, createdFromParcel);
+    }
+
+    @Test
+    public void testDescribeContents() {
+        assertEquals(0, testTag.describeContents());
     }
 }
