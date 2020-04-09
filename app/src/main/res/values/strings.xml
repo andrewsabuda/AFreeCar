@@ -5,4 +5,5 @@
     <string name="kit_id">Kit ID will appear here</string>
     <string name="openCv_text">Go to space detector</string>
     <string name="go_to_guide">Back To Assembly Guide</string>
+    <string name="launchOpenCv_text">Launch camera</string>
 </resources>
