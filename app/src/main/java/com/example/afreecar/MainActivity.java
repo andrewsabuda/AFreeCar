@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -23,6 +24,11 @@ import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
@@ -40,11 +46,14 @@ public class MainActivity extends AppCompatActivity {
     Button confirmResult;
     Button goToSpaceDetector;
 
-    public final String[] kitOneRequirements = { "1,2", "3,4", "5,6" }; // These need to be stored in the database.
-    public final String kitOneId = "assembly-requirements-one"; // This also needs to be stored in the database. Still need to implement compatibility for multiple different types of Kits. Right now, only one kit is being used.
+    public String[] kitOneRequirements; // This is retrieved from the database.
+    public final String kitOneId = "assembly-requirements-one"; // This value will be used to query the database.
     String[] scannedValues = new String[2];
     final int RequestCameraPermissionID = 1001;
-    //Sean test push
+
+    // Database initialization.
+    DatabaseReference kitIdRef = FirebaseDatabase.getInstance().getReference("kitId");
+    DatabaseReference kitListRef = kitIdRef.child(kitOneId); // Querying the database for this particular kit ID.
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -103,6 +112,21 @@ public class MainActivity extends AppCompatActivity {
         final Intent spaceDetectorIntent = new Intent(MainActivity.this, OpenCV.class);
         final Intent assembleIntent = getIntent();
         final boolean isAssembling = assembleIntent.getBooleanExtra("isAssembling", false);
+
+        // RETRIEVE KIT ONE VALUES FROM THE DATABASE
+        kitListRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String databaseValue = dataSnapshot.getValue(String.class);
+                kitOneRequirements = databaseValue.split("/");
+                Log.i("KIT", kitOneRequirements[0]);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("ERROR", "onCancelled", databaseError.toException());
+            }
+        });
 
         barcodeDetector = new BarcodeDetector.Builder(this)
                 .setBarcodeFormats(Barcode.QR_CODE)

@@ -157,19 +157,12 @@ public class OpenCV extends AppCompatActivity {
             final String[] requirementsList = assembleIntent.getStringArrayExtra("requirementsList");
             final int listPosition = assembleIntent.getIntExtra("listPosition", 0);
 
-            final Toast toast1 = Toast.makeText(getApplicationContext(), "List item completed", Toast.LENGTH_SHORT);
+            final Toast toast1 = Toast.makeText(getApplicationContext(), "Terminals connected!", Toast.LENGTH_SHORT);
             toast1.show();
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    toast1.cancel();
-                }
-            }, 800);
 
             final Intent intent = new Intent(OpenCV.this, RequirementsActivity.class);
 
-            requirementsList[listPosition] = "completed";
+            requirementsList[listPosition] = "CONNECTED";
             intent.putExtra("kitId", kitOneId);                      //Sending the kit ID value to RequirementsActivity
             intent.putExtra("kitRequirements", requirementsList);
 
