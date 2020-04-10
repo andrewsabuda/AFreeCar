@@ -1,31 +1,30 @@
-package com.example.afreecar.model.assembly;
+package com.example.afreecar.model.checklist.assembly;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
-import com.example.afreecar.model.AbstractEquatable;
-import com.example.afreecar.model.Equatable;
+import com.example.afreecar.model.abstraction.AbstractEquatable;
 import com.example.afreecar.model.ID;
-import com.example.afreecar.model.PartTag;
+import com.example.afreecar.model.checklist.PartTag;
 
 /**
  * Class containing information about a terminal's QR code ID and its target unique part tag.
  */
-public class TerminalInfo extends AbstractEquatable<TerminalInfo> implements Parcelable {
+public class Terminal extends AbstractEquatable<Terminal> implements Parcelable {
 
     private ID id;
     private PartTag target;
 
-    public TerminalInfo(@NonNull ID terminalID, @NonNull PartTag targetPartTag) {
+    public Terminal(@NonNull ID terminalID, @NonNull PartTag targetPartTag) {
         this.id = terminalID;
         this.target = targetPartTag;
     }
 
     // BEGIN PARCELABLE IMPLEMENTATION
 
-    protected TerminalInfo(Parcel in) {
+    protected Terminal(Parcel in) {
         id = in.readParcelable(ID.class.getClassLoader());
         target = in.readParcelable(PartTag.class.getClassLoader());
     }
@@ -41,15 +40,15 @@ public class TerminalInfo extends AbstractEquatable<TerminalInfo> implements Par
         dest.writeParcelable(target, flags);
     }
 
-    public static final Creator<TerminalInfo> CREATOR = new Creator<TerminalInfo>() {
+    public static final Creator<Terminal> CREATOR = new Creator<Terminal>() {
         @Override
-        public TerminalInfo createFromParcel(Parcel in) {
-            return new TerminalInfo(in);
+        public Terminal createFromParcel(Parcel in) {
+            return new Terminal(in);
         }
 
         @Override
-        public TerminalInfo[] newArray(int size) {
-            return new TerminalInfo[size];
+        public Terminal[] newArray(int size) {
+            return new Terminal[size];
         }
     };
 
@@ -64,12 +63,12 @@ public class TerminalInfo extends AbstractEquatable<TerminalInfo> implements Par
     }
 
     @Override
-    public boolean equals(TerminalInfo other) {
+    public boolean equals(Terminal other) {
         return this.id.equals(other.id) && this.target.equals(other.target);
     }
 
     @Override
-    public TerminalInfo clone() {
-        return new TerminalInfo(this.id.clone(), this.target.clone());
+    public Terminal clone() {
+        return new Terminal(this.id.clone(), this.target.clone());
     }
 }

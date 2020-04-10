@@ -1,10 +1,10 @@
-package com.example.afreecar.model.identification;
+package com.example.afreecar.model.checklist.identification;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.example.afreecar.model.ID;
-import com.example.afreecar.model.PartTag;
+import com.example.afreecar.model.checklist.PartTag;
 
 import java.util.HashMap;
 import java.util.HashSet;

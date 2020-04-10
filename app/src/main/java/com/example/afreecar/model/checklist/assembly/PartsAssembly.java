@@ -1,13 +1,13 @@
-package com.example.afreecar.model.assembly;
+package com.example.afreecar.model.checklist.assembly;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.afreecar.model.AbstractEquatable;
-import com.example.afreecar.model.DataAccessUtils;
+import com.example.afreecar.model.abstraction.AbstractEquatable;
+import com.example.afreecar.model.database.DataAccessUtils;
 import com.example.afreecar.model.ID;
-import com.example.afreecar.model.PartTag;
-import com.example.afreecar.model.PartTagPair;
+import com.example.afreecar.model.checklist.PartTag;
+import com.example.afreecar.model.checklist.PartTagPair;
 
 import java.util.HashMap;
 import java.util.Map;

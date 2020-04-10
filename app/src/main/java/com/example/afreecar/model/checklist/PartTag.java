@@ -1,8 +1,10 @@
-package com.example.afreecar.model;
+package com.example.afreecar.model.checklist;
 
 import android.os.Parcel;
 
 import androidx.annotation.NonNull;
+
+import com.example.afreecar.model.PartType;
 
 import java.security.InvalidParameterException;
 
@@ -13,6 +15,10 @@ import java.security.InvalidParameterException;
  */
 public class PartTag extends AbstractChecklistElement<PartTag> {
 
+    public static final String COLLECTION_NAME = "PartTags";
+    public static final String TYPE_FIELD_NAME = "type";
+    public static final String ORDINAL_FIELD_NAME = "ordinal";
+
     private PartType type;
     private Byte ordinal;
 
@@ -20,21 +26,21 @@ public class PartTag extends AbstractChecklistElement<PartTag> {
 
     /**
      * @param type - the type of part being described in this tag.
-     * @param number - the ID relative to other parts of the same type in a kit.
+     * @param ordinal - the ID relative to other parts of the same type in a kit.
      */
-    public PartTag(@NonNull PartType type, @NonNull int number) {
+    public PartTag(@NonNull PartType type, @NonNull int ordinal) {
         super(false);
 
-        if (number < 1) {
+        if (ordinal < 1) {
             throw new InvalidParameterException("Ordinal must be at least 1");
         }
 
-        if (number > Byte.MAX_VALUE) {
+        if (ordinal > Byte.MAX_VALUE) {
             throw new InvalidParameterException("Ordinal must be less than " + Byte.MAX_VALUE);
         }
 
         this.type = type;
-        this.ordinal = (byte) number;
+        this.ordinal = (byte) ordinal;
     }
 
     // BEGIN PARCELABLE IMPLEMENTATION

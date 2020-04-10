@@ -1,4 +1,4 @@
-package com.example.afreecar.model;
+package com.example.afreecar.model.checklist;
 
 import android.os.Parcel;
 import android.os.Parcelable;

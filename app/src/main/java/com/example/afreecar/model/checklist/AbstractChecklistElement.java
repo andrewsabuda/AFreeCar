@@ -1,10 +1,12 @@
-package com.example.afreecar.model;
+package com.example.afreecar.model.checklist;
 
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.RequiresApi;
+
+import com.example.afreecar.model.abstraction.AbstractPerfectHashable;
 
 public abstract class AbstractChecklistElement<T extends AbstractChecklistElement<T>> extends AbstractPerfectHashable<T> implements Parcelable {
 

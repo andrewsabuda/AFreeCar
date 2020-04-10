@@ -1,6 +1,6 @@
-package com.example.afreecar.model;
+package com.example.afreecar.model.abstraction;
 
-public abstract class AbstractPerfectHashable<T extends AbstractPerfectHashable<T>> extends AbstractEquatable<T> implements PerfectHashable<T> {
+public abstract class AbstractPerfectHashable<T extends AbstractPerfectHashable<T>> extends AbstractEquatable<T> implements Hashable<T> {
 
     @Override
     public boolean equals(T other) {

@@ -2,6 +2,8 @@ package com.example.afreecar.model;
 
 import android.os.Parcel;
 
+import com.example.afreecar.model.checklist.PartTag;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

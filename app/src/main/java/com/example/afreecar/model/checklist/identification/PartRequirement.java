@@ -1,13 +1,13 @@
-package com.example.afreecar.model.identification;
+package com.example.afreecar.model.checklist.identification;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
-import com.example.afreecar.model.AbstractEquatable;
+import com.example.afreecar.model.abstraction.AbstractEquatable;
 import com.example.afreecar.model.ID;
-import com.example.afreecar.model.PartTag;
+import com.example.afreecar.model.checklist.PartTag;
 
 import java.security.InvalidParameterException;
 import java.util.Arrays;
@@ -19,6 +19,10 @@ import java.util.Set;
  * fulfill that requirement.  Intended for use as a wrapper for data passed from the database.
  */
 public class PartRequirement extends AbstractEquatable<PartRequirement> implements Parcelable {
+
+    public static final String COLLECTION_NAME = "PartRequirements";
+    public static final String PART_TAG_FIELD_NAME = "part tag";
+    public static final String VALID_IDS_FIELD_NAME = "valid ids";
 
     private PartTag partTag;
     private Set<ID> validPartIDs;
@@ -88,6 +92,18 @@ public class PartRequirement extends AbstractEquatable<PartRequirement> implemen
         return other.getClass() == PartRequirement.class
                 ? this.equals((PartRequirement) other)
                 : this == other;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash;
+
+        hash = partTag.hashCode();
+        for(ID validID: validPartIDs) {
+            hash *= validID.hashCode();
+        }
+
+        return hash;
     }
 
     @Override

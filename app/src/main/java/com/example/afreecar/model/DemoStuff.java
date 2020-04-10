@@ -1,8 +1,9 @@
 package com.example.afreecar.model;
 
-import com.example.afreecar.model.assembly.PartConnectionsInfo;
-import com.example.afreecar.model.assembly.TerminalInfo;
-import com.example.afreecar.model.identification.PartRequirement;
+import com.example.afreecar.model.checklist.assembly.PartConnectionsInfo;
+import com.example.afreecar.model.checklist.assembly.Terminal;
+import com.example.afreecar.model.checklist.PartTag;
+import com.example.afreecar.model.checklist.identification.PartRequirement;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -44,24 +45,24 @@ public class DemoStuff {
 
 
     // TerminalInfo
-    public static final TerminalInfo controllerToBatteryTerminalInfo = new TerminalInfo(controllerToBatteryTerminalID, batteryTag);
-    public static final TerminalInfo controllerToMotorTerminalInfo = new TerminalInfo(controllerToMotorTerminalID, motorTag);
-    public static final TerminalInfo batteryToControllerTerminalInfo = new TerminalInfo(batteryToControllerTerminalID, controllerTag);
-    public static final TerminalInfo motorToControllerTerminalInfo = new TerminalInfo(motorToControllerTerminalID, controllerTag);
+    public static final Terminal controllerToBatteryTerminalInfo = new Terminal(controllerToBatteryTerminalID, batteryTag);
+    public static final Terminal controllerToMotorTerminalInfo = new Terminal(controllerToMotorTerminalID, motorTag);
+    public static final Terminal batteryToControllerTerminalInfo = new Terminal(batteryToControllerTerminalID, controllerTag);
+    public static final Terminal motorToControllerTerminalInfo = new Terminal(motorToControllerTerminalID, controllerTag);
 
 
 
     // TerminalInfo sets
-    public static final Set<TerminalInfo> controllerTerminals = new HashSet<TerminalInfo>(Arrays.asList(
+    public static final Set<Terminal> controllerTerminals = new HashSet<Terminal>(Arrays.asList(
             controllerToBatteryTerminalInfo,
             controllerToMotorTerminalInfo
     ));
 
-    public static final Set<TerminalInfo> batteryTerminals = new HashSet<TerminalInfo>(Arrays.asList(
+    public static final Set<Terminal> batteryTerminals = new HashSet<Terminal>(Arrays.asList(
             batteryToControllerTerminalInfo
     ));
 
-    public static final Set<TerminalInfo> motorTerminals = new HashSet<TerminalInfo>(Arrays.asList(
+    public static final Set<Terminal> motorTerminals = new HashSet<Terminal>(Arrays.asList(
             motorToControllerTerminalInfo
     ));
 
@@ -70,20 +71,20 @@ public class DemoStuff {
     // PartConnectionsInfo
     public static final PartConnectionsInfo controllerConnectionInfo = new PartConnectionsInfo(
             true,
-            new HashSet<TerminalInfo>(Arrays.asList(
+            new HashSet<Terminal>(Arrays.asList(
                     controllerToBatteryTerminalInfo,
                     controllerToMotorTerminalInfo
                     )));
 
     public static final PartConnectionsInfo batteryConnectionInfo = new PartConnectionsInfo(
             true,
-            new HashSet<TerminalInfo>(Arrays.asList(
+            new HashSet<Terminal>(Arrays.asList(
                     batteryToControllerTerminalInfo
             )));
 
     public static final PartConnectionsInfo motorConnectionInfo = new PartConnectionsInfo(
             true,
-            new HashSet<TerminalInfo>(Arrays.asList(
+            new HashSet<Terminal>(Arrays.asList(
                     motorToControllerTerminalInfo
             )));
 }

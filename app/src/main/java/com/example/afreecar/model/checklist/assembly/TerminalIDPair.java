@@ -1,11 +1,11 @@
-package com.example.afreecar.model.assembly;
+package com.example.afreecar.model.checklist.assembly;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
-import com.example.afreecar.model.AbstractEquatable;
+import com.example.afreecar.model.abstraction.AbstractEquatable;
 import com.example.afreecar.model.ID;
 
 public class TerminalIDPair extends AbstractEquatable<TerminalIDPair> implements Parcelable {

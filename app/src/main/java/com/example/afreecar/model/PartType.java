@@ -35,4 +35,19 @@ public enum PartType implements Parcelable {
             return new PartType[size];
         }
     };
+
+//    public static PartType valueOf(String name) {
+//        name = name.toLowerCase().trim();
+//
+//        switch (name) {
+//            case "controller":
+//                return Controller;
+//            case "battery":
+//                return Battery;
+//            case "motor":
+//                return Motor;
+//        }
+//
+//        return null;
+//    }
 }

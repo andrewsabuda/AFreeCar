@@ -1,9 +1,9 @@
-package com.example.afreecar.model.identification;
+package com.example.afreecar.model.checklist.identification;
 
 import android.os.Parcel;
 
 import com.example.afreecar.model.ID;
-import com.example.afreecar.model.PartTag;
+import com.example.afreecar.model.checklist.PartTag;
 import com.example.afreecar.model.PartType;
 
 import org.junit.Before;
@@ -13,7 +13,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import static org.junit.Assert.*;
 

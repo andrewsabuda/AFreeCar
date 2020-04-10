@@ -1,4 +1,4 @@
-package com.example.afreecar.model.assembly;
+package com.example.afreecar.model.checklist.assembly;
 
 import android.os.Build;
 import android.os.Parcel;
@@ -7,9 +7,9 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
-import com.example.afreecar.model.AbstractEquatable;
+import com.example.afreecar.model.abstraction.AbstractEquatable;
 import com.example.afreecar.model.ID;
-import com.example.afreecar.model.PartTag;
+import com.example.afreecar.model.checklist.PartTag;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +23,7 @@ import java.util.Set;
  */
 public class PartConnectionsInfo extends AbstractEquatable<PartConnectionsInfo> implements Parcelable {
 
+
     private boolean needsChassisConnection;
     private Map<PartTag, ID> terminalIDsMap;
 
@@ -31,11 +32,11 @@ public class PartConnectionsInfo extends AbstractEquatable<PartConnectionsInfo> 
         this.terminalIDsMap = terminalIDsMap;
     }
 
-    public PartConnectionsInfo(@NonNull boolean needsChassisConnection, @NonNull Set<TerminalInfo> terminals) {
+    public PartConnectionsInfo(@NonNull boolean needsChassisConnection, @NonNull Set<Terminal> terminals) {
         this.needsChassisConnection = needsChassisConnection;
 
         terminalIDsMap = new HashMap<>(terminals.size());
-        for (TerminalInfo terminal: terminals) {
+        for (Terminal terminal: terminals) {
             terminalIDsMap.put(terminal.getTarget(), terminal.getID());
         }
     }

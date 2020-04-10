@@ -5,6 +5,9 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import com.example.afreecar.model.abstraction.AbstractEquatable;
+import com.example.afreecar.model.abstraction.AbstractPerfectHashable;
+
 /**
  * Wrapper class for IDs to be read from QR codes, in case we use something besides {@code String}s.
  */
@@ -45,6 +48,11 @@ public class ID extends AbstractPerfectHashable<ID> implements Parcelable {
     };
 
     // END PARCELABLE IMPLEMENTATION
+
+    @Override
+    public boolean equals(ID other) {
+        return this.id.equals(other.id);
+    }
 
     @Override
     public ID clone() {
