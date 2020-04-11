@@ -46,14 +46,12 @@ public class MainActivity extends AppCompatActivity {
     Button confirmResult;
     Button goToSpaceDetector;
 
-    public String[] kitOneRequirements; // This is retrieved from the database.
-    public final String kitOneId = "assembly-requirements-one"; // This value will be used to query the database.
+    public String[] kitRequirements; // This is retrieved from the database.
     String[] scannedValues = new String[2];
     final int RequestCameraPermissionID = 1001;
 
     // Database initialization.
     DatabaseReference kitIdRef = FirebaseDatabase.getInstance().getReference("kitId");
-    DatabaseReference kitListRef = kitIdRef.child(kitOneId); // Querying the database for this particular kit ID.
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -113,20 +111,7 @@ public class MainActivity extends AppCompatActivity {
         final Intent assembleIntent = getIntent();
         final boolean isAssembling = assembleIntent.getBooleanExtra("isAssembling", false);
 
-        // RETRIEVE KIT ONE VALUES FROM THE DATABASE
-        kitListRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String databaseValue = dataSnapshot.getValue(String.class);
-                kitOneRequirements = databaseValue.split("/");
-                Log.i("KIT", kitOneRequirements[0]);
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w("ERROR", "onCancelled", databaseError.toException());
-            }
-        });
 
         barcodeDetector = new BarcodeDetector.Builder(this)
                 .setBarcodeFormats(Barcode.QR_CODE)
@@ -181,18 +166,32 @@ public class MainActivity extends AppCompatActivity {
                         txtResult.post(new Runnable() {
                             @Override
                             public void run() {
-
                                 //Create vibrate
                                 Vibrator vibrator = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
                                 vibrator.vibrate(1000);
 
                                 String qrValue = qrcodes.valueAt(0).displayValue;      //THIS IS WHERE THE QR CODE IS BEING READ AND TRANSLATED
 
-                                if (qrValue.equals(kitOneId)) {
+                                if(kitIdRef.child(qrValue) != null) {
+                                    DatabaseReference kitListRef = kitIdRef.child(qrValue); // Querying the database for this particular kit ID.
 
+                                    // RETRIEVE KIT ONE VALUES FROM THE DATABASE
+                                    kitListRef.addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            String databaseValue = dataSnapshot.getValue(String.class);
+                                            kitRequirements = databaseValue.split("/");
+                                            Log.i("KIT", kitRequirements[0]);
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+                                            Log.w("ERROR", "onCancelled", databaseError.toException());
+                                        }
+                                    });
                                     txtResult.setText(qrValue);
                                     intent.putExtra("kitId", qrValue);                      //Sending the kit ID value to RequirementsActivity
-                                    intent.putExtra("kitRequirements", kitOneRequirements);    //Sending the kit requirements array
+                                    intent.putExtra("kitRequirements", kitRequirements);    //Sending the kit requirements array
 
                                     confirmResult.setVisibility(View.VISIBLE);
                                     confirmResult.setOnClickListener(new View.OnClickListener() {
@@ -231,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
                                         if((Arrays.toString(scannedValues)).equals("[x, x]")) {
 
                                             spaceDetectorIntent.putExtra("listPosition", listPosition);
-                                            spaceDetectorIntent.putExtra("kitId", kitOneId);                      //Sending the kit ID value to RequirementsActivity
+                                            spaceDetectorIntent.putExtra("kitId", qrValue);                      //Sending the kit ID value to RequirementsActivity
                                             spaceDetectorIntent.putExtra("requirementsList", requirementsList);
 
                                             goToSpaceDetector.setVisibility(View.VISIBLE);
@@ -260,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
                                         if((Arrays.toString(scannedValues)).equals("[x, x]")) {
 
                                             spaceDetectorIntent.putExtra("listPosition", listPosition);
-                                            spaceDetectorIntent.putExtra("kitId", kitOneId);                      //Sending the kit ID value to RequirementsActivity
+                                            spaceDetectorIntent.putExtra("kitId", qrValue);                      //Sending the kit ID value to RequirementsActivity
                                             spaceDetectorIntent.putExtra("requirementsList", requirementsList);
 
                                             goToSpaceDetector.setVisibility(View.VISIBLE);
