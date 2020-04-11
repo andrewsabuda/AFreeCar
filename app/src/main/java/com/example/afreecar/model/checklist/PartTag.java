@@ -1,8 +1,10 @@
 package com.example.afreecar.model.checklist;
 
+import android.os.Build;
 import android.os.Parcel;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 import com.example.afreecar.model.PartType;
 
@@ -19,8 +21,8 @@ public class PartTag extends AbstractChecklistElement<PartTag> {
     public static final String TYPE_FIELD_NAME = "type";
     public static final String ORDINAL_FIELD_NAME = "ordinal";
 
-    private PartType type;
-    private Byte ordinal;
+    private final PartType type;
+    private final Byte ordinal;
 
     public static final int CARDINALITY = PartType.values().length * Byte.MAX_VALUE;
 
@@ -45,9 +47,10 @@ public class PartTag extends AbstractChecklistElement<PartTag> {
 
     // BEGIN PARCELABLE IMPLEMENTATION
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     protected PartTag(Parcel in) {
         super(false);
-        type = in.readParcelable(PartType.class.getClassLoader());
+        type = in.readTypedObject(PartType.CREATOR);
         if (in.readByte() == 0) {
             ordinal = null;
         } else {
@@ -55,9 +58,10 @@ public class PartTag extends AbstractChecklistElement<PartTag> {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(type, flags);
+        dest.writeTypedObject(type, flags);
         if (ordinal == null) {
             dest.writeByte((byte) 0);
         } else {

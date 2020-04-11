@@ -9,11 +9,14 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import static com.example.afreecar.model.TestConstants.*;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import static com.example.afreecar.model.database.DataAccessUtils.*;
@@ -23,13 +26,8 @@ public class DataAccessUtilsTest {
 
     private FirebaseFirestore db;
 
-    private static final PartTag EXPECTED_PART_TAG = new PartTag(PartType.Controller, 1);
     private static final String TARGET_PART_TAG_DOC_ID = "controller 1";
 
-    private static final PartRequirement EXPECTED_PART_REQ = new PartRequirement(
-            EXPECTED_PART_TAG,
-            new HashSet<ID>(Arrays.asList(new ID("1")))
-    );
     private static final String TARGET_PART_REQ_DOC_ID = "0cM3O7wweJyhru2OOi7p";
 
     private static final String TARGET_KIT_DOC_ID = "0";
@@ -62,7 +60,7 @@ public class DataAccessUtilsTest {
 
         PartRequirement partReq = buildPartReqFromDoc(doc);
 
-        assertEquals(EXPECTED_PART_REQ, partReq);
+        assertEquals(CONTROLLER_REQ, partReq);
     }
 
     @Test
@@ -73,12 +71,11 @@ public class DataAccessUtilsTest {
 
         DocumentSnapshot doc = tryGetDocResult(task);
 
-        Kit kit = buildKitFromDoc(doc);
+        Kit actual = buildKitFromDoc(doc);
 
-        HashSet<PartRequirement> partReqs = (HashSet<PartRequirement>) kit.getPartRequirements();
-        boolean result = partReqs.contains(EXPECTED_PART_REQ);
+        Kit expected = KIT;
 
-        assertTrue(kit.getPartRequirements().contains(EXPECTED_PART_REQ));
+        assertEquals(expected, actual);
     }
 
     @Test

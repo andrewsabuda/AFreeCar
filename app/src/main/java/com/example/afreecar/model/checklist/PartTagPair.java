@@ -1,14 +1,17 @@
 package com.example.afreecar.model.checklist;
 
+import android.os.Build;
 import android.os.Parcel;
+
+import androidx.annotation.RequiresApi;
 
 /**
  * Entity indicating a required connection between two unique parts.
  */
 public class PartTagPair extends AbstractChecklistElement<PartTagPair> {
 
-    private PartTag one;
-    private PartTag two;
+    private final PartTag one;
+    private final PartTag two;
 
     private static int CARDINALITY = ((Double) Math.pow(PartTag.CARDINALITY, 2)).intValue();
 
@@ -33,22 +36,16 @@ public class PartTagPair extends AbstractChecklistElement<PartTagPair> {
 
     // BEGIN PARCELABLE IMPLEMENTATION
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     protected PartTagPair(Parcel in) {
-        this(
-                (PartTag) in.readParcelable(PartTag.class.getClassLoader()),
-                (PartTag) in.readParcelable(PartTag.class.getClassLoader())
-        );
-//        PartTag[] tags = new PartTag[2];
-//        in.readTypedArray(tags, PartTag.CREATOR);
-//
-//        this.one = tags[0];
-//        this.two = tags[1];
+        this(in.readTypedObject(PartTag.CREATOR), in.readTypedObject(PartTag.CREATOR));
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(one, flags);
-        dest.writeParcelable(two, flags);
+        dest.writeTypedObject(one, flags);
+        dest.writeTypedObject(two, flags);
     }
 
     @Override

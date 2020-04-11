@@ -54,14 +54,14 @@ public class PartsAssembly extends AbstractEquatable<PartsAssembly> implements P
         chassisConnectionStatusMap = new HashMap<>(size);
 
         // Get connection requirements for each part, put starting entries in chassisConnectionStatusMap
-        Map<PartTag, PartConnectionsInfo> allPartConnectionsInfo = new HashMap<>(size);
+        Map<PartTag, Part> allPartConnectionsInfo = new HashMap<>(size);
         for (PartTag partTag : partTags) {
 
             // Query for PartConnectionsInfo data access object based on chosen ID for this unique part, put in map
             allPartConnectionsInfo.put(partTag, DataAccessUtils.getPartConnectionInfoForID(pickedPartsMap.get(partTag)));
 
             // Initialize entries with false values if needed
-            if (allPartConnectionsInfo.get(partTag).getChassisConnectionRequirement()) {
+            if (allPartConnectionsInfo.get(partTag).getQRDistance() > 0) {
                 chassisConnectionStatusMap.put(partTag, false);
             }
         }
@@ -70,16 +70,16 @@ public class PartsAssembly extends AbstractEquatable<PartsAssembly> implements P
         for (PartTag partTag : partTags) {
 
             // Get terminal IDs map this part
-            Map<PartTag, ID> thisPartsTerminalIDsMap = allPartConnectionsInfo.get(partTag).getTerminalIDsMap();
+            Map<PartTag, Terminal> thisPartTerminalMap = allPartConnectionsInfo.get(partTag).getTerminalMap();
 
             // Iterate over set of tags for this part's associated terminal target parts
-            for (PartTag terminalTag : thisPartsTerminalIDsMap.keySet()) {
+            for (PartTag terminalTag : thisPartTerminalMap.keySet()) {
 
                 // Get terminalIDsMap for the PartConnectionInfo associated with the current terminal tag
-                Map<PartTag, ID> otherPartsTerminalIDsMap = allPartConnectionsInfo.get(terminalTag).getTerminalIDsMap();
+                Map<PartTag, Terminal> otherPartTerminalMap = allPartConnectionsInfo.get(terminalTag).getTerminalMap();
 
                 // Check if the terminalIDsMap for the PartConnectionInfo associated with this terminal tag contains the tag for this part
-                if (allPartConnectionsInfo.get(terminalTag).getTerminalIDsMap().containsKey(partTag)) {
+                if (allPartConnectionsInfo.get(terminalTag).getTerminalMap().containsKey(partTag)) {
 
                     // Construct new key for maps
                     PartTagPair newKey = new PartTagPair(partTag, terminalTag);
@@ -94,8 +94,8 @@ public class PartsAssembly extends AbstractEquatable<PartsAssembly> implements P
                         // Construct new TerminalIDPair value by getting value for current terminal tag from outer terminal IDs map,
                         // and value for current part tag from inner terminal IDs map
                         terminalIDPairsMap.put(newKey, new TerminalIDPair(
-                                thisPartsTerminalIDsMap.get(terminalTag),
-                                otherPartsTerminalIDsMap.get(partTag)));
+                                thisPartTerminalMap.get(terminalTag).getID(),
+                                otherPartTerminalMap.get(partTag).getID()));
                     }
                 }
                 else {

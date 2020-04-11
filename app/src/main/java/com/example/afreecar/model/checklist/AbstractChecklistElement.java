@@ -6,11 +6,11 @@ import android.os.Parcelable;
 
 import androidx.annotation.RequiresApi;
 
-import com.example.afreecar.model.abstraction.AbstractPerfectHashable;
+import com.example.afreecar.model.abstraction.AbstractHashable;
 
-public abstract class AbstractChecklistElement<T extends AbstractChecklistElement<T>> extends AbstractPerfectHashable<T> implements Parcelable {
+public abstract class AbstractChecklistElement<T extends AbstractChecklistElement<T>> extends AbstractHashable<T> implements Parcelable {
 
-    private boolean isPair;
+    private final boolean isPair;
 
     public AbstractChecklistElement(boolean isPair) {
         this.isPair = isPair;

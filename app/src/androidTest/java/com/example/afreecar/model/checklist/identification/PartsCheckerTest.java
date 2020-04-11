@@ -3,6 +3,7 @@ package com.example.afreecar.model.checklist.identification;
 import android.os.Parcel;
 
 import com.example.afreecar.model.ID;
+import com.example.afreecar.model.Kit;
 import com.example.afreecar.model.checklist.PartTag;
 import com.example.afreecar.model.PartType;
 
@@ -20,9 +21,13 @@ public class PartsCheckerTest {
 
     private PartsChecker testChecker;
 
+    private static final ID KIT_ID = new ID("0");
+
     private static final PartTag[] PART_TAGS = initializePartTagSet();
 
     private static final ID[][] VALID_ID_SETS = initializeValidIDSets();
+
+    private static final Kit KIT = new Kit(KIT_ID, getPartRequirements());
 
     private static PartTag[] initializePartTagSet() {
         return new PartTag[] {
@@ -78,7 +83,7 @@ public class PartsCheckerTest {
 
     @Before
     public void setUp() {
-        testChecker = new PartsChecker(getPartRequirements());
+        testChecker = new PartsChecker(new Kit(KIT_ID, new HashSet<PartRequirement>(Arrays.asList(getPartRequirements()))));
     }
 
     @Test
@@ -188,7 +193,7 @@ public class PartsCheckerTest {
 
     @Test
     public void testEquals() {
-        assertEquals(new PartsChecker(getPartRequirements()), testChecker);
+        assertEquals(new PartsChecker(KIT), testChecker);
     }
 
     @Test

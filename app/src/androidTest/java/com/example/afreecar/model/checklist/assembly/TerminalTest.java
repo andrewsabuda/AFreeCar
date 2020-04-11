@@ -9,18 +9,17 @@ import com.example.afreecar.model.PartType;
 import org.junit.Before;
 import org.junit.Test;
 
+import static com.example.afreecar.model.TestConstants.*;
+
 import static org.junit.Assert.*;
 
-public class TerminalInfoTest {
+public class TerminalTest {
 
     private Terminal testInfo;
 
-    private static final ID TERMINAL_ID = new ID("1234");
-    private static final PartTag TARGET_TAG = new PartTag(PartType.Controller, 1);
-
     @Before
     public void setUp() {
-        testInfo = new Terminal(TERMINAL_ID, TARGET_TAG);
+        testInfo = CONTROLLER_TO_BATTERY_TERMINAL;
     }
 
     @Test
@@ -41,19 +40,19 @@ public class TerminalInfoTest {
 
     @Test
     public void testGetID() {
-        assertEquals(TERMINAL_ID, testInfo.getID());
+        assertEquals(CONTROLLER_TO_BATTERY_TERMINAL_ID, testInfo.getID());
     }
 
     @Test
     public void testGetTarget() {
-        assertEquals(TARGET_TAG, testInfo.getTarget());
+        assertEquals(BATTERY_TAG, testInfo.getTarget());
     }
 
     @Test
     public void testEquals() {
-        assertEquals(new Terminal(TERMINAL_ID, TARGET_TAG), testInfo);
-        assertNotEquals(new Terminal(new ID("5678"), TARGET_TAG), testInfo);
-        assertNotEquals(new Terminal(TERMINAL_ID, new PartTag(PartType.Controller, 2)), testInfo);
+        assertEquals(new Terminal(CONTROLLER_TO_BATTERY_TERMINAL_ID, STANDARD_QR_DISTANCE, BATTERY_TAG), testInfo);
+        assertNotEquals(CONTROLLER_TO_MOTOR_1_TERMINAL, testInfo);
+        assertNotEquals(CONTROLLER_TO_MOTOR_2_TERMINAL, testInfo);
     }
 
     @Test

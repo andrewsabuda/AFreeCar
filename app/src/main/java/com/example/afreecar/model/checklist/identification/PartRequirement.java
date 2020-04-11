@@ -8,9 +8,11 @@ import androidx.annotation.NonNull;
 import com.example.afreecar.model.abstraction.AbstractEquatable;
 import com.example.afreecar.model.ID;
 import com.example.afreecar.model.checklist.PartTag;
+import com.google.common.collect.ImmutableSet;
 
 import java.security.InvalidParameterException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,8 +26,8 @@ public class PartRequirement extends AbstractEquatable<PartRequirement> implemen
     public static final String PART_TAG_FIELD_NAME = "part tag";
     public static final String VALID_IDS_FIELD_NAME = "valid ids";
 
-    private PartTag partTag;
-    private Set<ID> validPartIDs;
+    private final PartTag partTag;
+    private final Set<ID> validPartIDs;
 
     /**
      * @param partTag - the {@code PartTag} whose requirement is being fulfilled.
@@ -37,7 +39,11 @@ public class PartRequirement extends AbstractEquatable<PartRequirement> implemen
             throw new InvalidParameterException("The set of valid parts must have at least one element.");
         }
         this.partTag = partTag;
-        this.validPartIDs = validPartIDs;
+        this.validPartIDs = Collections.unmodifiableSet(validPartIDs);
+    }
+
+    public PartRequirement(@NonNull PartTag partTag, @NonNull ID... validPartIDs) {
+        this(partTag, new HashSet<ID>(Arrays.asList(validPartIDs)));
     }
 
     // BEGIN PARCELABLE IMPLEMENTATION
@@ -76,22 +82,15 @@ public class PartRequirement extends AbstractEquatable<PartRequirement> implemen
     /**
      * @return the {@code PartTag} whose requirement is being fulfilled.
      */
-    protected PartTag getPartTag() {
+    public PartTag getPartTag() {
         return partTag;
     }
 
     /**
      * @return the set of valid part {@code ID}s for this particular requirement.
      */
-    protected Set<ID> getValidPartIDs() {
-        return validPartIDs;
-    }
-
-    @Override
-    public boolean equals(Object other) {
-        return other.getClass() == PartRequirement.class
-                ? this.equals((PartRequirement) other)
-                : this == other;
+    public Set<ID> getValidPartIDs() {
+        return Collections.unmodifiableSet(validPartIDs);
     }
 
     @Override

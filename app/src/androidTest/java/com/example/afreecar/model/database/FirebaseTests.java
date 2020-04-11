@@ -21,6 +21,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -69,6 +70,7 @@ public class FirebaseTests {
     }
 
     @Test
+    @Ignore
     public void testSave() {
         CollectionReference testRef = db.collection(TEST_COLLECTION);
         Task<DocumentReference> task = testRef.add(getHelloWorldMap());

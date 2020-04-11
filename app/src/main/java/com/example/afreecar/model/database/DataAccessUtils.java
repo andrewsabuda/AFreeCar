@@ -2,12 +2,11 @@ package com.example.afreecar.model.database;
 
 import androidx.annotation.NonNull;
 
-import com.example.afreecar.model.DemoStuff;
 import com.example.afreecar.model.ID;
 import com.example.afreecar.model.Kit;
 import com.example.afreecar.model.PartType;
 import com.example.afreecar.model.checklist.PartTag;
-import com.example.afreecar.model.checklist.assembly.PartConnectionsInfo;
+import com.example.afreecar.model.checklist.assembly.Part;
 import com.example.afreecar.model.checklist.assembly.Terminal;
 import com.example.afreecar.model.checklist.identification.PartRequirement;
 import com.google.android.gms.tasks.Task;
@@ -68,10 +67,10 @@ public class DataAccessUtils {
         return output;
     }
 
-    public boolean isValidKitID(@NonNull ID kitID) {
-        // Todo actual database query implementation
-        return kitID.equals(DemoStuff.kitID);
-    }
+//    public boolean isValidKitID(@NonNull ID kitID) {
+//        // Todo actual database query implementation
+//        return kitID.equals(DemoStuff.KIT_ID);
+//    }
 
     public static ID buildIDFromDoc(@NonNull DocumentSnapshot doc) {
         return new ID(doc.getId());
@@ -164,24 +163,24 @@ public class DataAccessUtils {
      * @param id - The {@Code ID} of the target part
      * @return The {@Code PartConnectionsInfo} containing the set of terminals associated with this part
      */
-    public static PartConnectionsInfo getPartConnectionInfoForID(@NonNull ID id) {
+    public static Part getPartConnectionInfoForID(@NonNull ID id) {
         // Todo actual database query implementation
-        boolean needsChassisConnection = true;
-        Set<Terminal> terminals = new HashSet<Terminal>();
-
-        if (id.equals(DemoStuff.controllerID)) {
-            terminals = DemoStuff.controllerTerminals;
-        }
-        else if (id.equals(DemoStuff.batteryID)) {
-            terminals = DemoStuff.batteryTerminals;
-        }
-        else if (id.equals(DemoStuff.motorID)) {
-            terminals = DemoStuff.motorTerminals;
-        }
-        else {
-            needsChassisConnection = false;
-        }
-
-        return new PartConnectionsInfo(needsChassisConnection, terminals);
+//        boolean needsChassisConnection = true;
+//        Set<Terminal> terminals = new HashSet<Terminal>();
+//
+//        if (id.equals(DemoStuff.controllerID)) {
+//            terminals = DemoStuff.controllerTerminals;
+//        }
+//        else if (id.equals(DemoStuff.batteryID)) {
+//            terminals = DemoStuff.batteryTerminals;
+//        }
+//        else if (id.equals(DemoStuff.motorID)) {
+//            terminals = DemoStuff.motorTerminals;
+//        }
+//        else {
+//            needsChassisConnection = false;
+//        }
+//
+        return null; //new Part(needsChassisConnection, terminals);
     }
 }

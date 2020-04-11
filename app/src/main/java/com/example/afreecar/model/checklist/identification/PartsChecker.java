@@ -4,8 +4,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.example.afreecar.model.ID;
+import com.example.afreecar.model.Kit;
 import com.example.afreecar.model.checklist.PartTag;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -18,21 +20,20 @@ import java.util.Set;
 public class PartsChecker implements Parcelable, Cloneable {
 
     private Map<PartTag, ID> pickedPartsMap;
-    private Map<PartTag, Set<ID>> validPartsMap;
+    private Map<PartTag, PartRequirement> validPartsMap;
 
-    private PartsChecker(Map<PartTag, ID> pickedPartsMap, Map<PartTag, Set<ID>> validPartsMap) {
+    private PartsChecker(Map<PartTag, ID> pickedPartsMap, Map<PartTag, PartRequirement> validPartsMap) {
         this.pickedPartsMap = pickedPartsMap;
         this.validPartsMap = validPartsMap;
     }
 
-    public PartsChecker(PartRequirement... partRequirements) {
+    public PartsChecker(Kit kitRequirements) {
 
-        validPartsMap = new HashMap<PartTag, Set<ID>>(partRequirements.length);
-        pickedPartsMap = new HashMap<PartTag, ID>(partRequirements.length);
+        validPartsMap = Collections.unmodifiableMap(kitRequirements.getPartRequirements());
+        pickedPartsMap = new HashMap<PartTag, ID>(validPartsMap.size());
 
-        for (PartRequirement partRequirement: partRequirements) {
-            validPartsMap.put(partRequirement.getPartTag(), partRequirement.getValidPartIDs());
-            pickedPartsMap.put(partRequirement.getPartTag(), null);
+        for (PartTag tag: validPartsMap.keySet()) {
+            pickedPartsMap.put(tag, null);
         }
     }
 
@@ -55,9 +56,10 @@ public class PartsChecker implements Parcelable, Cloneable {
         }
 
         pickedPartsMap = new HashMap<PartTag, ID>(length);
-        validPartsMap = new HashMap<PartTag, Set<ID>>(length);
+        validPartsMap = new HashMap<PartTag, PartRequirement>(length);
 
         for (i = 0; i < length; i++) {
+            PartTag currentTag = partTags[i];
             pickedPartsMap.put(partTags[i], pickedIDs[i]);
 
             Set<ID> tempValidIDSet = new HashSet<ID>(length);
@@ -66,7 +68,7 @@ public class PartsChecker implements Parcelable, Cloneable {
                 tempValidIDSet.add(validID);
             }
 
-            validPartsMap.put(partTags[i], tempValidIDSet);
+            validPartsMap.put(currentTag, new PartRequirement(currentTag, tempValidIDSet));
         }
     }
 
@@ -88,7 +90,7 @@ public class PartsChecker implements Parcelable, Cloneable {
         for (i = 0; i < length; i++) {
             pickedIDs[i] = pickedPartsMap.get(partTags[i]); // Put entries of pickedPartsMap in same order as keys
 
-            Set<ID> tempPickedIDSet = validPartsMap.get(partTags[i]);
+            Set<ID> tempPickedIDSet = validPartsMap.get(partTags[i]).getValidPartIDs();
             validIDs[i] = tempPickedIDSet.toArray(new ID[tempPickedIDSet.size()]); // Ditto for validPartsMap
         }
 
@@ -136,7 +138,7 @@ public class PartsChecker implements Parcelable, Cloneable {
      * @return the set of valid part IDs for this PartTag
      */
     public Set<ID> getValidParts(PartTag partTag) {
-        return validPartsMap.get(partTag);
+        return validPartsMap.get(partTag).getValidPartIDs();
     }
 
     /**
@@ -154,7 +156,7 @@ public class PartsChecker implements Parcelable, Cloneable {
      * false otherwise.
      */
     public boolean tryPickPart(PartTag partTag, ID partID) {
-        if (validPartsMap.get(partTag).contains(partID)) {
+        if (validPartsMap.get(partTag).getValidPartIDs().contains(partID)) {
             pickedPartsMap.put(partTag, partID);
             return true;
         }
@@ -191,7 +193,7 @@ public class PartsChecker implements Parcelable, Cloneable {
 
     @Override
     public PartsChecker clone() {
-        return new PartsChecker(new HashMap<PartTag, ID>(pickedPartsMap), new HashMap<PartTag, Set<ID>>(validPartsMap));
+        return new PartsChecker(new HashMap<PartTag, ID>(pickedPartsMap), new HashMap<PartTag, PartRequirement>(validPartsMap));
     }
 
     @Override

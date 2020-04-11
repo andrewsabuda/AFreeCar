@@ -6,14 +6,14 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 
 import com.example.afreecar.model.abstraction.AbstractEquatable;
-import com.example.afreecar.model.abstraction.AbstractPerfectHashable;
+import com.example.afreecar.model.abstraction.AbstractHashable;
 
 /**
  * Wrapper class for IDs to be read from QR codes, in case we use something besides {@code String}s.
  */
-public class ID extends AbstractPerfectHashable<ID> implements Parcelable {
+public class ID extends AbstractHashable<ID> implements Parcelable {
 
-    private String id;
+    private final String id;
 
     public ID(@NonNull String id) {
         this.id = id;
@@ -50,22 +50,27 @@ public class ID extends AbstractPerfectHashable<ID> implements Parcelable {
     // END PARCELABLE IMPLEMENTATION
 
     @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+    @Override
     public boolean equals(ID other) {
         return this.id.equals(other.id);
     }
 
     @Override
     public ID clone() {
-        return new ID(this.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return id.hashCode();
+        return new ID(toString());
     }
 
     @Override
     public String toString() {
         return id;
+    }
+
+    @Override
+    public int compareTo(ID other) {
+        return id.compareTo(other.id);
     }
 }

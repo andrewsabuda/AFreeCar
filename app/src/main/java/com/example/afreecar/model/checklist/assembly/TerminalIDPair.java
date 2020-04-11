@@ -1,14 +1,16 @@
 package com.example.afreecar.model.checklist.assembly;
 
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
-import com.example.afreecar.model.abstraction.AbstractEquatable;
+import com.example.afreecar.model.abstraction.AbstractHashable;
 import com.example.afreecar.model.ID;
 
-public class TerminalIDPair extends AbstractEquatable<TerminalIDPair> implements Parcelable {
+public class TerminalIDPair extends AbstractHashable<TerminalIDPair> implements Parcelable {
 
     private ID one;
     private ID two;
@@ -31,15 +33,17 @@ public class TerminalIDPair extends AbstractEquatable<TerminalIDPair> implements
 
     // BEGIN PARCELABLE IMPLEMENTATION
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     protected TerminalIDPair(Parcel in) {
-        one = in.readParcelable(ID.class.getClassLoader());
-        two = in.readParcelable(ID.class.getClassLoader());
+        one = in.readTypedObject(ID.CREATOR);
+        two = in.readTypedObject(ID.CREATOR);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(one, flags);
-        dest.writeParcelable(two, flags);
+        dest.writeTypedObject(one, flags);
+        dest.writeTypedObject(two, flags);
     }
 
     @Override
@@ -62,6 +66,11 @@ public class TerminalIDPair extends AbstractEquatable<TerminalIDPair> implements
     // END PARCELABLE IMPLEMENTATION
 
     @Override
+    public int hashCode() {
+        return one.hashCode() * two.hashCode();
+    }
+
+    @Override
     public TerminalIDPair clone() {
         return new TerminalIDPair(one.clone(), two.clone());
     }
@@ -69,5 +78,13 @@ public class TerminalIDPair extends AbstractEquatable<TerminalIDPair> implements
     @Override
     public boolean equals(TerminalIDPair other) {
         return this.one.equals(other.one) && this.two.equals(other.two);
+    }
+
+    @Override
+    public int compareTo(TerminalIDPair other) {
+        int oneComparison = this.one.compareTo(other.one);
+        return oneComparison == 0
+                ? this.two.compareTo(other.two)
+                : oneComparison;
     }
 }
