@@ -10,6 +10,7 @@ import androidx.annotation.RequiresApi;
 import com.example.afreecar.model.ID;
 import com.example.afreecar.model.checklist.PartTag;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -31,7 +32,7 @@ public class Part extends AbstractAssemblyItem<Part> {
         this.terminalMap = terminalMap;
     }
 
-    public Part(@NonNull ID partID, Double qrDistance, @NonNull Set<Terminal> terminals) {
+    public Part(@NonNull ID partID, Double qrDistance, @NonNull Collection<Terminal> terminals) {
         this(partID, qrDistance, toMap(terminals));
     }
 
@@ -39,7 +40,7 @@ public class Part extends AbstractAssemblyItem<Part> {
         this(partID, qrDistance, toMap(terminals));
     }
 
-    private static Map<PartTag, Terminal> toMap(Set<Terminal> terminals) {
+    private static Map<PartTag, Terminal> toMap(Collection<Terminal> terminals) {
         Map<PartTag, Terminal> terminalIDsMap = new HashMap<>(terminals.size());
         for (Terminal terminal: terminals) {
             terminalIDsMap.put(terminal.getTarget(), terminal);

@@ -2,74 +2,53 @@ package com.example.afreecar.model;
 
 import com.example.afreecar.model.abstraction.AbstractEquatable;
 import com.example.afreecar.model.checklist.PartTag;
-import com.example.afreecar.model.checklist.identification.PartRequirement;
+import com.example.afreecar.model.checklist.assembly.Part;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
+/**
+ * Represents an eKit, which is defined by a kit ID and a map of PartTags to their chosen Parts
+ */
 public class Kit extends AbstractEquatable<Kit> {
 
-    public static final String COLLECTION_NAME = "Kits";
-    public static final String ID_FIELD_NAME = "id";
-    public static final String PART_REQS_FIELD_NAME = "part requirements";
-
     private final ID kitID;
-    private final Map<PartTag, PartRequirement> partRequirements;
+    private final Map<PartTag, Part> partsMap;
 
-    public Kit(ID kitID, Map<PartTag, PartRequirement> partRequirements) {
-        this.kitID = kitID.clone();
-        this.partRequirements = Collections.unmodifiableMap(partRequirements);
+    public Kit(ID kitID, Map<PartTag, Part> partsMap) {
+        this.kitID = kitID;
+        this.partsMap = new HashMap<>(partsMap);
     }
 
-    public Kit(ID kitID, Set<PartRequirement> partRequirementSet) {
-        this(kitID, toMap(partRequirementSet));
-    }
-
-    public Kit(ID kitID, PartRequirement... partRequirements) {
-        this(kitID, toMap(partRequirements));
-    }
-
-    private static Map<PartTag, PartRequirement> toMap(Set<PartRequirement> partRequirementSet) {
-        Map<PartTag, PartRequirement> output = new HashMap<PartTag, PartRequirement>(partRequirementSet.size());
-
-        for(PartRequirement req: partRequirementSet) {
-            output.put(req.getPartTag(), req);
-        }
-
-        return output;
-    }
-
-    private static Map<PartTag, PartRequirement> toMap(PartRequirement... partRequirements) {
-        Map<PartTag, PartRequirement> output = new HashMap<PartTag, PartRequirement>(partRequirements.length);
-
-        for(PartRequirement req: partRequirements) {
-            output.put(req.getPartTag(), req);
-        }
-
-        return output;
-    }
-
-    public ID getKitID() {
+    /**
+     * Retrieves this Kit's ID
+     * @return a clone of this Kit's ID
+     */
+    public ID getID() {
         return kitID.clone();
     }
 
-    public Map<PartTag, PartRequirement>  getPartRequirements() {
-        return Collections.unmodifiableMap(partRequirements);
+    /**
+     * Retrieves this Kit's map of PartTags to Parts
+     * @return an unmodifiable clone of this Kit's map of PartTags to Parts
+     */
+    public Map<PartTag, Part> getPartsMap() {
+        return Collections.unmodifiableMap(partsMap);
     }
 
     @Override
     public boolean equals(Kit other) {
-        boolean output;
-        output = this.kitID.equals(other.kitID);
-        output &= this.partRequirements.equals(other.partRequirements);
-        return output;
-//        return this.kitID.equals(other.kitID) && this.partRequirements.equals(other.partRequirements);
+        Boolean result;
+
+        result = this.kitID.equals(other.kitID);
+        result &= this.partsMap.equals(other.partsMap);
+
+        return result;
     }
 
     @Override
     public Kit clone() {
-        return new Kit(kitID, partRequirements);
+        return new Kit(getID(), partsMap);
     }
 }

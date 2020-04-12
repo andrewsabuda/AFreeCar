@@ -10,12 +10,15 @@ import androidx.annotation.RequiresApi;
 import com.example.afreecar.model.abstraction.AbstractHashable;
 import com.example.afreecar.model.ID;
 
-public class TerminalIDPair extends AbstractHashable<TerminalIDPair> implements Parcelable {
+import java.util.Objects;
 
-    private ID one;
-    private ID two;
+public class TerminalPair extends AbstractHashable<TerminalPair> implements Parcelable {
 
-    public TerminalIDPair(@NonNull ID one, @NonNull ID two) {
+    private final ID one;
+    private final ID two;
+    private final Double qrDistance;
+
+    public TerminalPair(@NonNull ID one, @NonNull ID two, @NonNull Double qrDistance) {
         // Ensures sorting of parts internally
         int comparison = one.compareTo(two);
         if (comparison == 0) {
@@ -29,14 +32,19 @@ public class TerminalIDPair extends AbstractHashable<TerminalIDPair> implements 
             this.one = two;
             this.two = one;
         }
+
+        this.qrDistance = qrDistance;
+    }
+
+    public TerminalPair(@NonNull Terminal one, @NonNull Terminal two) {
+        this(one.getID(),two.getID(),one.getQRDistance() + two.getQRDistance());
     }
 
     // BEGIN PARCELABLE IMPLEMENTATION
 
     @RequiresApi(api = Build.VERSION_CODES.M)
-    protected TerminalIDPair(Parcel in) {
-        one = in.readTypedObject(ID.CREATOR);
-        two = in.readTypedObject(ID.CREATOR);
+    protected TerminalPair(Parcel in) {
+        this(in.readTypedObject(ID.CREATOR), in.readTypedObject(ID.CREATOR), in.readDouble());
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -44,6 +52,7 @@ public class TerminalIDPair extends AbstractHashable<TerminalIDPair> implements 
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeTypedObject(one, flags);
         dest.writeTypedObject(two, flags);
+        dest.writeDouble(qrDistance);
     }
 
     @Override
@@ -51,37 +60,39 @@ public class TerminalIDPair extends AbstractHashable<TerminalIDPair> implements 
         return 0;
     }
 
-    public static final Creator<TerminalIDPair> CREATOR = new Creator<TerminalIDPair>() {
+    public static final Creator<TerminalPair> CREATOR = new Creator<TerminalPair>() {
+        @RequiresApi(api = Build.VERSION_CODES.M)
         @Override
-        public TerminalIDPair createFromParcel(Parcel in) {
-            return new TerminalIDPair(in);
+        public TerminalPair createFromParcel(Parcel in) {
+            return new TerminalPair(in);
         }
 
         @Override
-        public TerminalIDPair[] newArray(int size) {
-            return new TerminalIDPair[size];
+        public TerminalPair[] newArray(int size) {
+            return new TerminalPair[size];
         }
     };
 
     // END PARCELABLE IMPLEMENTATION
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public int hashCode() {
-        return one.hashCode() * two.hashCode();
+        return Objects.hash(one.toString(), two.toString(), qrDistance);
     }
 
     @Override
-    public TerminalIDPair clone() {
-        return new TerminalIDPair(one.clone(), two.clone());
+    public TerminalPair clone() {
+        return new TerminalPair(one.clone(), two.clone(), Double.valueOf(qrDistance));
     }
 
     @Override
-    public boolean equals(TerminalIDPair other) {
+    public boolean equals(TerminalPair other) {
         return this.one.equals(other.one) && this.two.equals(other.two);
     }
 
     @Override
-    public int compareTo(TerminalIDPair other) {
+    public int compareTo(TerminalPair other) {
         int oneComparison = this.one.compareTo(other.one);
         return oneComparison == 0
                 ? this.two.compareTo(other.two)

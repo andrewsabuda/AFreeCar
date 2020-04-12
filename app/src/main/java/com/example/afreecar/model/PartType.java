@@ -4,8 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
- * Enumeration describing all possible types of parts that may be found in an eKit, as well as
- * an entry for the chassis itself for use in modeling physical connections to parts.
+ * Enumeration describing all possible types of parts that may be found in an eKit.
  */
 public enum PartType implements Parcelable {
     Controller,
@@ -25,6 +24,7 @@ public enum PartType implements Parcelable {
 
     // Uses stored ordinal to retrieve enum
     public static final Creator<PartType> CREATOR = new Creator<PartType>() {
+
         @Override
         public PartType createFromParcel(Parcel in) {
             return PartType.values()[in.readInt()];
@@ -35,19 +35,4 @@ public enum PartType implements Parcelable {
             return new PartType[size];
         }
     };
-
-//    public static PartType valueOf(String name) {
-//        name = name.toLowerCase().trim();
-//
-//        switch (name) {
-//            case "controller":
-//                return Controller;
-//            case "battery":
-//                return Battery;
-//            case "motor":
-//                return Motor;
-//        }
-//
-//        return null;
-//    }
 }

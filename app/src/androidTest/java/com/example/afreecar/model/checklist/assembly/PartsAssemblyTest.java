@@ -11,18 +11,23 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.example.afreecar.model.TestConstants.*;
+
 import static org.junit.Assert.*;
 
 public class PartsAssemblyTest {
 
     private PartsAssembly testAssembly;
 
-    private static final Map<PartTag, ID> PICKED_PARTS_MAP = initializePickedPartsMap();
+    private static final Map<PartTag, Part> PICKED_PARTS_MAP = initializePickedPartsMap();
 
-    public static Map<PartTag, ID> initializePickedPartsMap() {
-        Map<PartTag, ID> output = new HashMap<PartTag, ID>();
+    public static Map<PartTag, Part> initializePickedPartsMap() {
+        Map<PartTag, Part> output = new HashMap<PartTag, Part>();
 
-        //Todo
+        output.put(CONTROLLER_TAG, CONTROLLER);
+        output.put(BATTERY_TAG, BATTERY);
+        output.put(MOTOR_1_TAG, MOTOR_2);
+        output.put(MOTOR_2_TAG, MOTOR_1);
 
         return output;
     }

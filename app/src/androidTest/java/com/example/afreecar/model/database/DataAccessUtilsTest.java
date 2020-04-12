@@ -1,11 +1,12 @@
 package com.example.afreecar.model.database;
 
 import com.example.afreecar.model.ID;
-import com.example.afreecar.model.Kit;
+import com.example.afreecar.model.KitRequirements;
 import com.example.afreecar.model.PartType;
 import com.example.afreecar.model.checklist.PartTag;
 import com.example.afreecar.model.checklist.identification.PartRequirement;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -14,10 +15,7 @@ import static com.example.afreecar.model.TestConstants.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import static com.example.afreecar.model.database.DataAccessUtils.*;
 import static org.junit.Assert.*;
@@ -38,12 +36,12 @@ public class DataAccessUtilsTest {
     }
 
     @Test
-    public void testBuildPartTagFromDoc() throws Exception {
-        Task<DocumentSnapshot> task = db.collection(PartTag.COLLECTION_NAME)
+    public void testBuildPartTagFromDoc() throws ExecutionException, InterruptedException {
+        Task<DocumentSnapshot> readTagTask = db.collection(PartTag.COLLECTION_NAME)
                 .document(TARGET_PART_TAG_DOC_ID)
                 .get();
 
-        DocumentSnapshot doc = tryGetDocResult(task);
+        DocumentSnapshot doc = Tasks.await(readTagTask);
 
         PartTag tag = buildPartTagFromDoc(doc);
 
@@ -56,7 +54,7 @@ public class DataAccessUtilsTest {
                 .document(TARGET_PART_REQ_DOC_ID)
                 .get();
 
-        DocumentSnapshot doc = tryGetDocResult(task);
+        DocumentSnapshot doc = Tasks.await(task);
 
         PartRequirement partReq = buildPartReqFromDoc(doc);
 
@@ -64,23 +62,23 @@ public class DataAccessUtilsTest {
     }
 
     @Test
-    public void testBuildKitFromDoc() throws Exception {
-        Task<DocumentSnapshot> task = db.collection(Kit.COLLECTION_NAME)
+    public void testBuildKitRequirementsFromDoc() throws Exception {
+        Task<DocumentSnapshot> task = db.collection(KitRequirements.COLLECTION_NAME)
                 .document(TARGET_KIT_DOC_ID)
                 .get();
 
-        DocumentSnapshot doc = tryGetDocResult(task);
+        DocumentSnapshot doc = Tasks.await(task);
 
-        Kit actual = buildKitFromDoc(doc);
+        KitRequirements actual = buildKitFromDoc(doc);
 
-        Kit expected = KIT;
+        KitRequirements expected = KIT_REQUIREMENTS;
 
         assertEquals(expected, actual);
     }
 
     @Test
     public void testGetKitRequirements() throws Exception {
-        Kit kit;
+        KitRequirements kit;
 
         kit = getKitRequirements(new ID(TARGET_KIT_DOC_ID));
 

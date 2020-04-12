@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import com.example.afreecar.model.ID;
 import com.example.afreecar.model.Kit;
+import com.example.afreecar.model.KitRequirements;
 import com.example.afreecar.model.checklist.PartTag;
 
 import java.util.Collections;
@@ -27,7 +28,7 @@ public class PartsChecker implements Parcelable, Cloneable {
         this.validPartsMap = validPartsMap;
     }
 
-    public PartsChecker(Kit kitRequirements) {
+    public PartsChecker(KitRequirements kitRequirements) {
 
         validPartsMap = Collections.unmodifiableMap(kitRequirements.getPartRequirements());
         pickedPartsMap = new HashMap<PartTag, ID>(validPartsMap.size());

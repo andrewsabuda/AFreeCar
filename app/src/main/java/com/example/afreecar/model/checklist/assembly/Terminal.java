@@ -5,18 +5,20 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
-import com.example.afreecar.model.abstraction.AbstractEquatable;
 import com.example.afreecar.model.ID;
 import com.example.afreecar.model.checklist.PartTag;
-import com.google.common.primitives.UnsignedInteger;
 
 /**
  * Class containing information about a terminal's QR code ID and its target unique part tag.
  */
 public class Terminal extends AbstractAssemblyItem<Terminal> implements Parcelable {
+
+    public static final String COLLECTION_NAME = "Terminals";
+    public static final String ID_FIELD_NAME = "id";
+    public static final String QR_DISTANCE_FIELD_NAME = "qr distance";
+    public static final String TARGET_TAG_FIELD_NAME = "target tag";
 
     private PartTag target;
 
@@ -46,6 +48,7 @@ public class Terminal extends AbstractAssemblyItem<Terminal> implements Parcelab
     }
 
     public static final Creator<Terminal> CREATOR = new Creator<Terminal>() {
+        @RequiresApi(api = Build.VERSION_CODES.M)
         @Override
         public Terminal createFromParcel(Parcel in) {
             return new Terminal(in);

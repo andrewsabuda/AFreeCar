@@ -39,16 +39,6 @@ public final class TestConstants {
     public static final PartTag MOTOR_1_TAG = new PartTag(PartType.Motor, 1);
     public static final PartTag MOTOR_2_TAG = new PartTag(PartType.Motor, 2);
 
-
-    // PartsRequirements
-    public static final PartRequirement CONTROLLER_REQ = new PartRequirement(CONTROLLER_TAG, new HashSet<ID>(Arrays.asList(CONTROLLER_ID)));
-    public static final PartRequirement BATTERY_REQ = new PartRequirement(BATTERY_TAG, new HashSet<ID>(Arrays.asList(BATTERY_ID)));
-    public static final PartRequirement MOTOR_1_REQ = new PartRequirement(MOTOR_1_TAG, new HashSet<ID>(Arrays.asList(MOTOR_1_ID, MOTOR_2_ID)));
-    public static final PartRequirement MOTOR_2_REQ = new PartRequirement(MOTOR_2_TAG, new HashSet<ID>(Arrays.asList(MOTOR_1_ID, MOTOR_2_ID)));
-
-    // Kit
-    public static final Kit KIT = new Kit(KIT_ID, CONTROLLER_REQ, BATTERY_REQ, MOTOR_1_REQ, MOTOR_2_REQ);
-
     // Basic ideal distance from QR code to edge of part/terminal
     public static final Double STANDARD_QR_DISTANCE = 0.5;
 
@@ -87,4 +77,14 @@ public final class TestConstants {
             STANDARD_QR_DISTANCE,
             MOTOR_2_TO_CONTROLLER_TERMINAL
     );
+
+    // PartsRequirements
+    public static final PartRequirement CONTROLLER_REQ = new PartRequirement(CONTROLLER_TAG, CONTROLLER_ID);
+    public static final PartRequirement BATTERY_REQ = new PartRequirement(BATTERY_TAG, BATTERY_ID);
+    public static final PartRequirement MOTOR_1_REQ = new PartRequirement(MOTOR_1_TAG, MOTOR_1_ID, MOTOR_2_ID);
+    public static final PartRequirement MOTOR_2_REQ = new PartRequirement(MOTOR_2_TAG, MOTOR_1_ID, MOTOR_2_ID);
+
+    // Kit
+    public static final KitRequirements KIT_REQUIREMENTS = new KitRequirements(KIT_ID, CONTROLLER_REQ, BATTERY_REQ, MOTOR_1_REQ, MOTOR_2_REQ);
+
 }

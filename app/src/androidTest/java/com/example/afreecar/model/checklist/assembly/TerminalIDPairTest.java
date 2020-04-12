@@ -9,16 +9,18 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+import static com.example.afreecar.model.TestConstants.*;
+
 public class TerminalIDPairTest {
 
-    private TerminalIDPair testTermIDPair;
+    private TerminalPair testTermIDPair;
 
     private static final ID TERMINAL_ID_ONE = new ID("1234");
     private static final ID TERMINAL_ID_TWO = new ID("5678");
 
     @Before
     public void setUp() {
-        testTermIDPair = new TerminalIDPair(TERMINAL_ID_ONE, TERMINAL_ID_TWO);
+        testTermIDPair = new TerminalPair(CONTROLLER_TO_BATTERY_TERMINAL, BATTERY_TO_CONTROLLER_TERMINAL);
     }
 
     @Test
@@ -27,7 +29,7 @@ public class TerminalIDPairTest {
         testTermIDPair.writeToParcel(parcel, testTermIDPair.describeContents());
         parcel.setDataPosition(0);
 
-        TerminalIDPair createdFromParcel = TerminalIDPair.CREATOR.createFromParcel(parcel);
+        TerminalPair createdFromParcel = TerminalPair.CREATOR.createFromParcel(parcel);
 
         assertEquals(testTermIDPair, createdFromParcel);
     }
@@ -39,12 +41,12 @@ public class TerminalIDPairTest {
 
     @Test
     public void testEquals() {
-        assertEquals(new TerminalIDPair(TERMINAL_ID_ONE, TERMINAL_ID_TWO), testTermIDPair);
+        assertEquals(new TerminalPair(BATTERY_TO_CONTROLLER_TERMINAL, CONTROLLER_TO_BATTERY_TERMINAL), testTermIDPair);
     }
 
     @Test
     public void testClone() {
-        TerminalIDPair clone = testTermIDPair.clone();
+        TerminalPair clone = testTermIDPair.clone();
         assertEquals(testTermIDPair, clone);
         assertNotSame(testTermIDPair, clone);
     }

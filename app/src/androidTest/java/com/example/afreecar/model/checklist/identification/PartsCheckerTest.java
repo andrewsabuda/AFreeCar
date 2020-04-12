@@ -4,6 +4,7 @@ import android.os.Parcel;
 
 import com.example.afreecar.model.ID;
 import com.example.afreecar.model.Kit;
+import com.example.afreecar.model.KitRequirements;
 import com.example.afreecar.model.checklist.PartTag;
 import com.example.afreecar.model.PartType;
 
@@ -15,41 +16,40 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import static com.example.afreecar.model.TestConstants.*;
+
 import static org.junit.Assert.*;
 
 public class PartsCheckerTest {
 
     private PartsChecker testChecker;
 
-    private static final ID KIT_ID = new ID("0");
-
-    private static final PartTag[] PART_TAGS = initializePartTagSet();
-
-    private static final ID[][] VALID_ID_SETS = initializeValidIDSets();
-
-    private static final Kit KIT = new Kit(KIT_ID, getPartRequirements());
-
-    private static PartTag[] initializePartTagSet() {
-        return new PartTag[] {
-                new PartTag(PartType.Controller, 1),
-                new PartTag(PartType.Battery, 1),
-                new PartTag(PartType.Motor, 1)
+    private static final PartTag[] PART_TAGS;
+    static {
+        PART_TAGS = new PartTag[] {
+                CONTROLLER_TAG,
+                BATTERY_TAG,
+                MOTOR_1_TAG,
+                MOTOR_2_TAG
         };
     }
 
-    private static ID[][] initializeValidIDSets() {
-        return new ID[][] {
+    private static final ID[][] VALID_ID_SETS;
+    static {
+        VALID_ID_SETS = new ID[][] {
                 new ID[]{
-                        new ID("1"),
-                        new ID("2")
+                        CONTROLLER_ID
                 },
                 new ID[] {
-                        new ID("3"),
-                        new ID("4")
+                        BATTERY_ID
                 },
                 new ID[]{
-                        new ID("5"),
-                        new ID("6")
+                        MOTOR_1_ID,
+                        MOTOR_2_ID
+                },
+                new ID[]{
+                        MOTOR_1_ID,
+                        MOTOR_2_ID
                 }
         };
     }
@@ -83,7 +83,7 @@ public class PartsCheckerTest {
 
     @Before
     public void setUp() {
-        testChecker = new PartsChecker(new Kit(KIT_ID, new HashSet<PartRequirement>(Arrays.asList(getPartRequirements()))));
+        testChecker = new PartsChecker(new KitRequirements(KIT_ID, new HashSet<PartRequirement>(Arrays.asList(getPartRequirements()))));
     }
 
     @Test
@@ -193,7 +193,7 @@ public class PartsCheckerTest {
 
     @Test
     public void testEquals() {
-        assertEquals(new PartsChecker(KIT), testChecker);
+        assertEquals(new PartsChecker(KIT_REQUIREMENTS), testChecker);
     }
 
     @Test
