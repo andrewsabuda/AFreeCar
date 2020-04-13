@@ -7,12 +7,12 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
-import com.example.afreecar.model.abstraction.AbstractHashable;
+import com.example.afreecar.model.abstraction.AbstractPerfectHashable;
 import com.example.afreecar.model.ID;
 
 import java.util.Objects;
 
-public class TerminalPair extends AbstractHashable<TerminalPair> implements Parcelable {
+public class TerminalPair extends AbstractPerfectHashable<TerminalPair> implements Parcelable {
 
     private final ID one;
     private final ID two;

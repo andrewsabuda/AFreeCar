@@ -5,34 +5,19 @@ import android.os.Parcel;
 
 import androidx.annotation.RequiresApi;
 
+import com.example.afreecar.model.abstraction.Equatable;
+import com.example.afreecar.model.checklist.assembly.Part;
+
 /**
  * Entity indicating a required connection between two unique parts.
  */
-public class PartTagPair extends AbstractChecklistElement<PartTagPair> {
-
-    private final PartTag one;
-    private final PartTag two;
+public class PartTagPair extends AbstractChecklist.PairableElement<PartTagPair, PartTag> {
 
     private static int CARDINALITY = ((Double) Math.pow(PartTag.CARDINALITY, 2)).intValue();
 
     public PartTagPair(PartTag one, PartTag two) {
-        super(true);
-
-        // Ensures sorting of parts internally
-        int comparison = one.compareTo(two);
-        if (comparison == 0) {
-            throw new IllegalArgumentException("Cannot connect a part to itself.");
-        }
-        else if (comparison < 0) {
-            this.one = one;
-            this.two = two;
-        }
-        else {
-            this.one = two;
-            this.two = one;
-        }
+        super(one, two);
     }
-
 
     // BEGIN PARCELABLE IMPLEMENTATION
 
@@ -54,6 +39,7 @@ public class PartTagPair extends AbstractChecklistElement<PartTagPair> {
     }
 
     public static final Creator<PartTagPair> CREATOR = new Creator<PartTagPair>() {
+        @RequiresApi(api = Build.VERSION_CODES.M)
         @Override
         public PartTagPair createFromParcel(Parcel in) {
             return new PartTagPair(in);

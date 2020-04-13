@@ -37,7 +37,7 @@ public class PartRequirementTest {
     }
 
     @Test
-    public void writeToParcel() {
+    public void testWriteToParcel() {
         Parcel parcel = Parcel.obtain();
         testReq.writeToParcel(parcel, testReq.describeContents());
         parcel.setDataPosition(0);
@@ -48,17 +48,17 @@ public class PartRequirementTest {
     }
 
     @Test
-    public void describeContents() {
+    public void testDescribeContents() {
         assertEquals(testReq.describeContents(), 0);
     }
 
     @Test
-    public void getPartTag() {
+    public void testGetPartTag() {
         assertEquals(testReq.getPartTag(), TAG);
     }
 
     @Test
-    public void getValidPartIDs() {
+    public void testGetValidPartIDs() {
         assertEquals(testReq.getValidPartIDs(), VALID_IDS);
     }
 

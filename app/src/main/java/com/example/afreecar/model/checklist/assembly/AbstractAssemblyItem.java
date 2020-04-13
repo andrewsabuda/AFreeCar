@@ -8,11 +8,10 @@ import androidx.annotation.RequiresApi;
 
 import com.example.afreecar.model.ID;
 import com.example.afreecar.model.abstraction.AbstractEquatable;
-import com.example.afreecar.model.abstraction.AbstractHashable;
 
 import java.util.Objects;
 
-public abstract class AbstractAssemblyItem<T extends AbstractAssemblyItem<T>> extends AbstractHashable<T> implements AssemblyItem<T>, Parcelable {
+public abstract class AbstractAssemblyItem<T extends AbstractAssemblyItem<T>> extends AbstractEquatable<T> implements AssemblyItem<T>, Parcelable {
 
     private final ID id;
     private final Double qrDistance;

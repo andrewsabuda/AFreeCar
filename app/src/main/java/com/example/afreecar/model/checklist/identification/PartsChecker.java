@@ -4,13 +4,15 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.example.afreecar.model.ID;
-import com.example.afreecar.model.Kit;
 import com.example.afreecar.model.KitRequirements;
+import com.example.afreecar.model.checklist.AbstractChecklist;
 import com.example.afreecar.model.checklist.PartTag;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,7 +20,7 @@ import java.util.Set;
  * Class used to retrieve a set of parts for the input eKit ID,
  * and then construct a collection of valid scanned QR code IDs from those sets.
  */
-public class PartsChecker implements Parcelable, Cloneable {
+public class PartsChecker extends AbstractChecklist<PartsChecker, PartTag, ID> implements Parcelable {
 
     private Map<PartTag, ID> pickedPartsMap;
     private Map<PartTag, PartRequirement> validPartsMap;
@@ -119,18 +121,62 @@ public class PartsChecker implements Parcelable, Cloneable {
 
     // END PARCELABLE IMPLEMENTATION
 
+
+
+    // BEGIN CHECKLIST IMPLEMENTATION
+
     /**
      * @return the set of part tags required for assembling the eKit, for use in displaying in UI.
      */
-    public Set<PartTag> getPartTags() {
-        return pickedPartsMap.keySet();
+    @Override
+    public List<PartTag> getElements() {
+        ArrayList<PartTag> partTags;
+        partTags = new ArrayList<PartTag>(pickedPartsMap.keySet());
+        Collections.sort(partTags);
+        return partTags;
     }
+
+    @Override
+    public Boolean doesFulfill(PartTag partTag, ID partID) {
+        Boolean result;
+
+        result = validPartsMap.get(partTag).getValidPartIDs().contains(partID);
+
+        return result;
+    }
+
+    /**
+     * @param partTag - the {@code PartTag} whose respective value is intended to be set.
+     * @param partID - the {@code PartID} that will be checked and, if found to be valid, inserted into the map.
+     * @return true if the input {@code ID} was found to be valid, indicating that data has been updated;
+     * false otherwise.
+     */
+    @Override
+    public Boolean tryFulfill(PartTag partTag, ID partID) {
+        if (this.doesFulfill(partTag, partID)) {
+            pickedPartsMap.put(partTag, partID);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param partTag - the {@code PartTag} whose respective value should be checked.
+     * @return true if the input {@code PartTag} was found to have a chosen {@code ID} associated with it.
+     */
+    @Override
+    public Boolean isFulfilled(PartTag partTag) {
+        return pickedPartsMap.get(partTag) != null;
+    }
+
+    // END CHECKLIST IMPLEMENTATION
 
     /**
      * @param partTag - The PartTag for which the currently selected ID should be retrieved
      * @return The part ID currently selected for this PartTag
      */
-    public ID getPickedPart(PartTag partTag) {
+    public ID getPickedPartID(PartTag partTag) {
         return pickedPartsMap.get(partTag);
     }
 
@@ -143,53 +189,17 @@ public class PartsChecker implements Parcelable, Cloneable {
     }
 
     /**
-     * @param partTag - the {@code PartTag} whose respective value should be checked.
-     * @return true if the input {@code PartTag} was found to have a chosen {@code ID} associated with it.
-     */
-    public boolean isPartPicked(PartTag partTag) {
-        return pickedPartsMap.get(partTag) != null;
-    }
-
-    /**
-     * @param partTag - the {@code PartTag} whose respective value is intended to be set.
-     * @param partID - the {@code PartID} that will be checked and, if found to be valid, inserted into the map.
-     * @return true if the input {@code ID} was found to be valid, indicating that data has been updated;
-     * false otherwise.
-     */
-    public boolean tryPickPart(PartTag partTag, ID partID) {
-        if (validPartsMap.get(partTag).getValidPartIDs().contains(partID)) {
-            pickedPartsMap.put(partTag, partID);
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * @param partTag - the {@code PartTag} whose respective value should be set to null.
      * @return true if there was an entry for the input {@code PartTag},
      * indicating that data has been updated; false otherwise.
      */
     public boolean tryRemovePart(PartTag partTag) {
-        if (isPartPicked(partTag)) {
+        if (isFulfilled(partTag)) {
             pickedPartsMap.put(partTag, null);
             return true;
         }
 
         return false;
-    }
-
-    /**
-     * @return true if an {@code ID} for a part has been chosen to fulfill every part requirement; false otherwise.
-     */
-    public boolean isFulfilled() {
-        for (PartTag partTag: pickedPartsMap.keySet()) {
-            if (!isPartPicked(partTag)) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     @Override
@@ -198,12 +208,6 @@ public class PartsChecker implements Parcelable, Cloneable {
     }
 
     @Override
-    public boolean equals(Object other) {
-        return other.getClass() == PartsChecker.class
-                ? this.equals((PartsChecker) other)
-                : this == other;
-    }
-
     public boolean equals(PartsChecker other) {
         return this.validPartsMap.equals(other.validPartsMap) && this.pickedPartsMap.equals(other.pickedPartsMap);
     }
@@ -212,6 +216,6 @@ public class PartsChecker implements Parcelable, Cloneable {
      * @return a copy of the pickedPartsMap.
      */
     public Map<PartTag, ID> clonePickedParts() {
-        return new HashMap<PartTag, ID>(pickedPartsMap);
+        return Collections.unmodifiableMap(pickedPartsMap);
     }
 }

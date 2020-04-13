@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
 import com.example.afreecar.model.PartType;
+import com.example.afreecar.model.abstraction.AbstractPerfectHashable;
 
 import java.security.InvalidParameterException;
 
@@ -15,7 +16,7 @@ import java.security.InvalidParameterException;
  * which may include multiple of the same type - which will be displayed to users when selecting parts.
  * Designed for use as a key in HashMaps as the primary front facing indexer for
  */
-public class PartTag extends AbstractChecklistElement<PartTag> {
+public class PartTag extends AbstractChecklist.Element<PartTag> {
 
     public static final String COLLECTION_NAME = "PartTags";
     public static final String TYPE_FIELD_NAME = "type";
@@ -31,7 +32,6 @@ public class PartTag extends AbstractChecklistElement<PartTag> {
      * @param ordinal - the ID relative to other parts of the same type in a kit.
      */
     public PartTag(@NonNull PartType type, @NonNull int ordinal) {
-        super(false);
 
         if (ordinal < 1) {
             throw new InvalidParameterException("Ordinal must be at least 1");
@@ -49,33 +49,17 @@ public class PartTag extends AbstractChecklistElement<PartTag> {
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     protected PartTag(Parcel in) {
-        super(false);
-        type = in.readTypedObject(PartType.CREATOR);
-        if (in.readByte() == 0) {
-            ordinal = null;
-        } else {
-            ordinal = in.readByte();
-        }
+        this(in.readTypedObject(PartType.CREATOR), in.readByte());
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
-    @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeTypedObject(type, flags);
-        if (ordinal == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeByte(ordinal);
-        }
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
+        dest.writeByte(ordinal);
     }
 
     public static final Creator<PartTag> CREATOR = new Creator<PartTag>() {
+        @RequiresApi(api = Build.VERSION_CODES.M)
         @Override
         public PartTag createFromParcel(Parcel in) {
             return new PartTag(in);
@@ -98,12 +82,13 @@ public class PartTag extends AbstractChecklistElement<PartTag> {
     }
 
     @Override
-    public boolean equals(Object other) {
-        return other.getClass() == PartTag.class ? this.equals((PartTag) other) : this.equals(other);
-    }
-
     public boolean equals(PartTag other) {
-        return type == other.type && ordinal == other.ordinal;
+        Boolean result;
+
+        result = this.type.equals(other.type);
+        result &= this.ordinal.equals(other.ordinal);
+
+        return result;
     }
 
     @Override

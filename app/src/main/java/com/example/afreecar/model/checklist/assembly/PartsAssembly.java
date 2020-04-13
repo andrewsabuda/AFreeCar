@@ -22,7 +22,7 @@ public class PartsAssembly extends AbstractEquatable<PartsAssembly> implements P
     Map<PartTag, Part> partsMap;
 
     // Maps pairs of tags for unique parts that should be connected to each other, to their connection terminal IDs.
-    Map<PartTagPair, TerminalPair> terminalIDPairsMap;
+    Map<PartTagPair, TerminalPair> terminalPairsMap;
 
     // Maps pairs of tags for unique parts that should be connected to each other, to the status of their connection.
     Map<PartTagPair, Boolean> terminalConnectionStatusMap;
@@ -36,7 +36,7 @@ public class PartsAssembly extends AbstractEquatable<PartsAssembly> implements P
             Map<PartTagPair, Boolean> terminalConnectionStatusMap,
             Map<PartTag, Boolean> chassisConnectionStatusMap) {
         this.partsMap = partsMap;
-        this.terminalIDPairsMap = terminalIDPairsMap;
+        this.terminalPairsMap = terminalIDPairsMap;
         this.terminalConnectionStatusMap = terminalConnectionStatusMap;
         this.chassisConnectionStatusMap = chassisConnectionStatusMap;
     }
@@ -49,7 +49,7 @@ public class PartsAssembly extends AbstractEquatable<PartsAssembly> implements P
 
         // Initialize backing maps
         partsMap = new HashMap<>(pickedPartsMap);
-        terminalIDPairsMap = new HashMap<>(size);
+        terminalPairsMap = new HashMap<>(size);
         terminalConnectionStatusMap = new HashMap<>(size);
         chassisConnectionStatusMap = new HashMap<>(size);
 
@@ -87,11 +87,11 @@ public class PartsAssembly extends AbstractEquatable<PartsAssembly> implements P
                     terminalConnectionStatusMap.put(newKey, false);
 
                     // Check if terminalIDPairsMap already contains value for this key, skip if it does
-                    if (terminalIDPairsMap.containsKey(newKey)) {
+                    if (terminalPairsMap.containsKey(newKey)) {
 
                         // Construct new TerminalIDPair value by getting value for current terminal tag from outer terminal IDs map,
                         // and value for current part tag from inner terminal IDs map
-                        terminalIDPairsMap.put(newKey, new TerminalPair(
+                        terminalPairsMap.put(newKey, new TerminalPair(
                                 thisPartTerminalMap.get(terminalTag),
                                 otherPartTerminalMap.get(partTag)
                                 ));
@@ -152,7 +152,7 @@ public class PartsAssembly extends AbstractEquatable<PartsAssembly> implements P
     public boolean tryUpdateTerminalConnectionStatus(PartTagPair partTagPair, TerminalPair terminalIDPair, boolean value) {
 
         // Check if the input pair of terminal IDs matches the recorded pair
-        if (terminalIDPair.equals(terminalIDPairsMap.get(partTagPair))) {
+        if (terminalIDPair.equals(terminalPairsMap.get(partTagPair))) {
             terminalConnectionStatusMap.put(partTagPair, value);
 
             return true;
@@ -199,17 +199,21 @@ public class PartsAssembly extends AbstractEquatable<PartsAssembly> implements P
 
     @Override
     public boolean equals(PartsAssembly other) {
-        return this.partsMap.equals(other.partsMap)
-                && this.terminalIDPairsMap.equals(other.terminalIDPairsMap)
-                && this.terminalConnectionStatusMap.equals(other.terminalConnectionStatusMap)
-                && this.chassisConnectionStatusMap.equals(other.chassisConnectionStatusMap);
+        Boolean result;
+
+        result = this.partsMap.equals(other.partsMap);
+        result &= this.terminalPairsMap.equals(other.terminalPairsMap);
+        result &= this.terminalConnectionStatusMap.equals(other.terminalConnectionStatusMap);
+        result &= this.chassisConnectionStatusMap.equals(other.chassisConnectionStatusMap);
+
+        return result;
     }
 
     @Override
     public PartsAssembly clone() {
         return new PartsAssembly(
                 new HashMap<PartTag, Part>(partsMap),
-                new HashMap<PartTagPair, TerminalPair>(terminalIDPairsMap),
+                new HashMap<PartTagPair, TerminalPair>(terminalPairsMap),
                 new HashMap<PartTagPair, Boolean>(terminalConnectionStatusMap),
                 new HashMap<PartTag, Boolean>(chassisConnectionStatusMap));
     }

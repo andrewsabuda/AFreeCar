@@ -1,7 +1,8 @@
 package com.example.afreecar.model.abstraction;
 
-public interface Hashable<T extends Hashable<T>> extends Comparable<T>, Equatable<T> {
+public interface Hashable<TImpl extends Hashable<TImpl>> extends Equatable<TImpl> {
 
     @Override
     int hashCode();
+
 }

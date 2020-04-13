@@ -1,11 +1,12 @@
 package com.example.afreecar.model.abstraction;
 
-public interface Equatable<T extends Equatable<T>> extends Cloneable {
+public interface Equatable<TImpl extends Equatable<TImpl>> extends Cloneable {
 
     @Override
     boolean equals(Object other);
 
-    boolean equals(T other);
+    boolean equals(TImpl other);
 
-    T clone();
+    TImpl clone();
+
 }

@@ -5,13 +5,12 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
-import com.example.afreecar.model.abstraction.AbstractEquatable;
-import com.example.afreecar.model.abstraction.AbstractHashable;
+import com.example.afreecar.model.abstraction.AbstractPerfectHashable;
 
 /**
  * Wrapper class for IDs to be read from QR codes, in case we use something besides {@code String}s.
  */
-public class ID extends AbstractHashable<ID> implements Parcelable {
+public class ID extends AbstractPerfectHashable<ID> implements Parcelable {
 
     private final String id;
 

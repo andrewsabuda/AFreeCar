@@ -1,21 +1,11 @@
 package com.example.afreecar.model.abstraction;
 
-public abstract class AbstractHashable<T extends AbstractHashable<T>> extends AbstractEquatable<T> implements Hashable<T> {
-
-    @Override
-    public boolean equals(T other) {
-        return this.hashCode() == other.hashCode();
-    }
-
-    @Override
-    public int compareTo(T other) {
-        return this.hashCode() - other.hashCode();
-    }
+public abstract class AbstractHashable<TImpl extends AbstractHashable<TImpl>> extends AbstractEquatable<TImpl> implements Hashable<TImpl> {
 
     @Override
     public abstract int hashCode();
 
     // Breaks if you remove it
     @Override
-    public abstract T clone();
+    public abstract TImpl clone();
 }

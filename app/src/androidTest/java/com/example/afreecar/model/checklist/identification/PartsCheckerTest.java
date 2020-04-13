@@ -11,6 +11,7 @@ import com.example.afreecar.model.PartType;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -72,7 +73,7 @@ public class PartsCheckerTest {
     }
 
     private boolean pickPart(int i) {
-        return testChecker.tryPickPart(PART_TAGS[i], getLastValidPart(i));
+        return testChecker.tryFulfill(PART_TAGS[i], getLastValidPart(i));
     }
 
     private void pickParts() {
@@ -106,19 +107,19 @@ public class PartsCheckerTest {
 
     @Test
     public void testGetPartTags() {
-        assertEquals(testChecker.getPartTags(), new HashSet<PartTag>(Arrays.asList(PART_TAGS)));
+        assertEquals(new ArrayList<PartTag>(Arrays.asList(PART_TAGS)), testChecker.getElements());
     }
 
     @Test
     public void testGetPickedPart() {
         for (PartTag tag: PART_TAGS) {
-            assertEquals(testChecker.getPickedPart(tag), null);
+            assertEquals(testChecker.getPickedPartID(tag), null);
         }
 
         pickParts();
 
         for (int i = 0; i < PART_TAGS.length; i++) {
-            assertEquals(testChecker.getPickedPart(PART_TAGS[i]), getLastValidPart(i));
+            assertEquals(testChecker.getPickedPartID(PART_TAGS[i]), getLastValidPart(i));
         }
     }
 
@@ -130,25 +131,25 @@ public class PartsCheckerTest {
     }
 
     @Test
-    public void testIssPartPicked() {
+    public void testIsPartPicked() {
         for (PartTag tag: PART_TAGS) {
-            assertFalse(testChecker.isPartPicked(tag));
+            assertFalse(testChecker.isFulfilled(tag));
         }
 
         pickParts();
 
         for (PartTag tag: PART_TAGS) {
-            assertTrue(testChecker.isPartPicked(tag));
+            assertTrue(testChecker.isFulfilled(tag));
         }
     }
 
     @Test
-    public void testTryPickPart() {
+    public void testTryFulfill() {
         for (int i = 0; i < PART_TAGS.length; i++) {
             PartTag currentTag = PART_TAGS[i];
-            assertFalse(testChecker.isPartPicked(currentTag));
+            assertFalse(testChecker.isFulfilled(currentTag));
             assertTrue(pickPart(i));
-            assertEquals(testChecker.getPickedPart(currentTag), getLastValidPart(i));
+            assertEquals(testChecker.getPickedPartID(currentTag), getLastValidPart(i));
         }
     }
 
@@ -158,20 +159,20 @@ public class PartsCheckerTest {
 
         for (int i = 0; i < PART_TAGS.length; i++) {
             PartTag currentTag = PART_TAGS[i];
-            assertTrue(testChecker.isPartPicked(currentTag));
+            assertTrue(testChecker.isFulfilled(currentTag));
             assertTrue(testChecker.tryRemovePart(currentTag));
-            assertFalse(testChecker.isPartPicked(currentTag));
+            assertFalse(testChecker.isFulfilled(currentTag));
         }
     }
 
     @Test
-    public void testIsFulfilled() {
+    public void testIsChecklistFulfilled() {
         for (int i = 0; i < PART_TAGS.length; i++) {
-            assertFalse(testChecker.isFulfilled());
+            assertFalse(testChecker.isChecklistFulfilled());
             pickPart(i);
         }
 
-        assertTrue(testChecker.isFulfilled());
+        assertTrue(testChecker.isChecklistFulfilled());
     }
 
 
@@ -184,8 +185,8 @@ public class PartsCheckerTest {
 
         Map<PartTag, ID> pickedPartsMap = new HashMap<>(clonedIDs.size());
 
-        for (PartTag tag: testChecker.getPartTags()) {
-            pickedPartsMap.put(tag, testChecker.getPickedPart(tag));
+        for (PartTag tag: testChecker.getElements()) {
+            pickedPartsMap.put(tag, testChecker.getPickedPartID(tag));
         }
 
         assertEquals(pickedPartsMap, clonedIDs);

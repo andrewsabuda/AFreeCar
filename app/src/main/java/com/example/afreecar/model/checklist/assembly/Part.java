@@ -2,7 +2,6 @@ package com.example.afreecar.model.checklist.assembly;
 
 import android.os.Build;
 import android.os.Parcel;
-import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -12,10 +11,8 @@ import com.example.afreecar.model.checklist.PartTag;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * Class intended to represent a collection of IDs of a part's terminals,

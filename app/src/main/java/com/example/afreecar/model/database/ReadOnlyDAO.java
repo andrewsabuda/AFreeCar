@@ -36,7 +36,7 @@ public interface ReadOnlyDAO<TObject, TIdentifier> {
     /**
      * Interface defining an in-progress read transaction from the database, which may be used to
      * asynchronously retrieve the result of that transaction once it is needed.
-     * @param <T>
+     * @param <T> The type of object that this task will retrieve.
      */
     interface DAOReadTask<T> {
 
