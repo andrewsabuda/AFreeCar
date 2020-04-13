@@ -11,16 +11,13 @@ import static org.junit.Assert.*;
 
 import static com.example.afreecar.model.TestConstants.*;
 
-public class TerminalIDPairTest {
+public class QRCodePairTest {
 
-    private TerminalPair testTermIDPair;
-
-    private static final ID TERMINAL_ID_ONE = new ID("1234");
-    private static final ID TERMINAL_ID_TWO = new ID("5678");
+    private QRCodePair testTermIDPair;
 
     @Before
     public void setUp() {
-        testTermIDPair = new TerminalPair(CONTROLLER_TO_BATTERY_TERMINAL, BATTERY_TO_CONTROLLER_TERMINAL);
+        testTermIDPair = new QRCodePair(CONTROLLER_TO_BATTERY_TERMINAL, BATTERY_TO_CONTROLLER_TERMINAL);
     }
 
     @Test
@@ -29,7 +26,7 @@ public class TerminalIDPairTest {
         testTermIDPair.writeToParcel(parcel, testTermIDPair.describeContents());
         parcel.setDataPosition(0);
 
-        TerminalPair createdFromParcel = TerminalPair.CREATOR.createFromParcel(parcel);
+        QRCodePair createdFromParcel = QRCodePair.CREATOR.createFromParcel(parcel);
 
         assertEquals(testTermIDPair, createdFromParcel);
     }
@@ -41,12 +38,12 @@ public class TerminalIDPairTest {
 
     @Test
     public void testEquals() {
-        assertEquals(new TerminalPair(BATTERY_TO_CONTROLLER_TERMINAL, CONTROLLER_TO_BATTERY_TERMINAL), testTermIDPair);
+        assertEquals(new QRCodePair(BATTERY_TO_CONTROLLER_TERMINAL, CONTROLLER_TO_BATTERY_TERMINAL), testTermIDPair);
     }
 
     @Test
     public void testClone() {
-        TerminalPair clone = testTermIDPair.clone();
+        QRCodePair clone = testTermIDPair.clone();
         assertEquals(testTermIDPair, clone);
         assertNotSame(testTermIDPair, clone);
     }

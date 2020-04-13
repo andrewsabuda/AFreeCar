@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import com.example.afreecar.model.abstraction.AbstractEquatable;
 import com.example.afreecar.model.ID;
 import com.example.afreecar.model.checklist.PartTag;
-import com.google.common.collect.ImmutableSet;
 
 import java.security.InvalidParameterException;
 import java.util.Arrays;
@@ -42,7 +41,7 @@ public class PartRequirement extends AbstractEquatable<PartRequirement> implemen
         this.validPartIDs = Collections.unmodifiableSet(validPartIDs);
     }
 
-    public PartRequirement(@NonNull PartTag partTag, @NonNull ID... validPartIDs) {
+    public PartRequirement(PartTag partTag, @NonNull ID... validPartIDs) {
         this(partTag, new HashSet<ID>(Arrays.asList(validPartIDs)));
     }
 

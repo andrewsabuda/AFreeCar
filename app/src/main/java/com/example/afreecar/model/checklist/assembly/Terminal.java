@@ -1,11 +1,9 @@
 package com.example.afreecar.model.checklist.assembly;
 
-import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 
 import com.example.afreecar.model.ID;
 import com.example.afreecar.model.checklist.PartTag;
@@ -20,16 +18,15 @@ public class Terminal extends AbstractAssemblyItem<Terminal> implements Parcelab
     public static final String QR_DISTANCE_FIELD_NAME = "qr distance";
     public static final String TARGET_TAG_FIELD_NAME = "target tag";
 
-    private PartTag target;
+    @NonNull private PartTag target;
 
-    public Terminal(@NonNull ID terminalID, @NonNull Double qrDistance, @NonNull PartTag targetPartTag) {
+    public Terminal(ID terminalID, Double qrDistance, PartTag targetPartTag) {
         super(terminalID, qrDistance);
         this.target = targetPartTag;
     }
 
     // BEGIN PARCELABLE IMPLEMENTATION
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     protected Terminal(Parcel in) {
         super(in);
         target = in.readTypedObject(PartTag.CREATOR);
@@ -40,7 +37,6 @@ public class Terminal extends AbstractAssemblyItem<Terminal> implements Parcelab
         return 0;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
@@ -48,7 +44,6 @@ public class Terminal extends AbstractAssemblyItem<Terminal> implements Parcelab
     }
 
     public static final Creator<Terminal> CREATOR = new Creator<Terminal>() {
-        @RequiresApi(api = Build.VERSION_CODES.M)
         @Override
         public Terminal createFromParcel(Parcel in) {
             return new Terminal(in);

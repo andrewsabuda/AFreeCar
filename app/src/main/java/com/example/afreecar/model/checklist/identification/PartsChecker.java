@@ -3,6 +3,8 @@ package com.example.afreecar.model.checklist.identification;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 import com.example.afreecar.model.ID;
 import com.example.afreecar.model.KitRequirements;
 import com.example.afreecar.model.checklist.AbstractChecklist;
@@ -25,12 +27,12 @@ public class PartsChecker extends AbstractChecklist<PartsChecker, PartTag, ID> i
     private Map<PartTag, ID> pickedPartsMap;
     private Map<PartTag, PartRequirement> validPartsMap;
 
-    private PartsChecker(Map<PartTag, ID> pickedPartsMap, Map<PartTag, PartRequirement> validPartsMap) {
+    private PartsChecker(@NonNull Map<PartTag, ID> pickedPartsMap, @NonNull Map<PartTag, PartRequirement> validPartsMap) {
         this.pickedPartsMap = pickedPartsMap;
         this.validPartsMap = validPartsMap;
     }
 
-    public PartsChecker(KitRequirements kitRequirements) {
+    public PartsChecker(@NonNull KitRequirements kitRequirements) {
 
         validPartsMap = Collections.unmodifiableMap(kitRequirements.getPartRequirements());
         pickedPartsMap = new HashMap<PartTag, ID>(validPartsMap.size());

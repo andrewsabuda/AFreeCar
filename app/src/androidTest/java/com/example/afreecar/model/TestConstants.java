@@ -5,10 +5,6 @@ import com.example.afreecar.model.checklist.assembly.Terminal;
 import com.example.afreecar.model.checklist.PartTag;
 import com.example.afreecar.model.checklist.identification.PartRequirement;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * Class containing static instances of other objects to be used for demo/testing purposes.
  */

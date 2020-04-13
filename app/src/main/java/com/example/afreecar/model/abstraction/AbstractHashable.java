@@ -5,7 +5,4 @@ public abstract class AbstractHashable<TImpl extends AbstractHashable<TImpl>> ex
     @Override
     public abstract int hashCode();
 
-    // Breaks if you remove it
-    @Override
-    public abstract TImpl clone();
 }

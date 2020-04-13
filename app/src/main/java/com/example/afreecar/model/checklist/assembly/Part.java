@@ -4,7 +4,6 @@ import android.os.Build;
 import android.os.Parcel;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 
 import com.example.afreecar.model.ID;
 import com.example.afreecar.model.checklist.PartTag;
@@ -22,18 +21,18 @@ import java.util.Objects;
  */
 public class Part extends AbstractAssemblyItem<Part> {
 
-    private final Map<PartTag, Terminal> terminalMap;
+    @NonNull private final Map<PartTag, Terminal> terminalMap;
 
     private Part(ID partID, Double qrDistance, Map<PartTag, Terminal>terminalMap) {
         super(partID, qrDistance);
         this.terminalMap = terminalMap;
     }
 
-    public Part(@NonNull ID partID, Double qrDistance, @NonNull Collection<Terminal> terminals) {
+    public Part(ID partID, Double qrDistance, Collection<Terminal> terminals) {
         this(partID, qrDistance, toMap(terminals));
     }
 
-    public Part(@NonNull ID partID, Double qrDistance, @NonNull Terminal... terminals) {
+    public Part(ID partID, Double qrDistance, Terminal... terminals) {
         this(partID, qrDistance, toMap(terminals));
     }
 
@@ -57,13 +56,11 @@ public class Part extends AbstractAssemblyItem<Part> {
 
     // BEGIN PARCELABLE IMPLEMENTATION
 
-    @RequiresApi(api = Build.VERSION_CODES.Q)
     protected Part(Parcel in) {
         super(in);
         this.terminalMap = toMap(in.createTypedArray(Terminal.CREATOR));
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
@@ -76,7 +73,6 @@ public class Part extends AbstractAssemblyItem<Part> {
     }
 
     public static final Creator<Part> CREATOR = new Creator<Part>() {
-        @RequiresApi(api = Build.VERSION_CODES.Q)
         @Override
         public Part createFromParcel(Parcel in) {
             return new Part(in);
@@ -102,7 +98,6 @@ public class Part extends AbstractAssemblyItem<Part> {
         return output;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), terminalMap);

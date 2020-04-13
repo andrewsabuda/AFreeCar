@@ -3,12 +3,14 @@ package com.example.afreecar.model.checklist.assembly;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 import com.example.afreecar.model.abstraction.AbstractEquatable;
-import com.example.afreecar.model.database.DataAccessUtils;
 import com.example.afreecar.model.ID;
 import com.example.afreecar.model.checklist.PartTag;
 import com.example.afreecar.model.checklist.PartTagPair;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -19,20 +21,20 @@ import java.util.Set;
 public class PartsAssembly extends AbstractEquatable<PartsAssembly> implements Parcelable {
 
     // Maps tags for unique parts to their IDs
-    Map<PartTag, Part> partsMap;
+    @NonNull private final Map<PartTag, Part> partsMap;
 
     // Maps pairs of tags for unique parts that should be connected to each other, to their connection terminal IDs.
-    Map<PartTagPair, TerminalPair> terminalPairsMap;
+    @NonNull private final Map<PartTagPair, QRCodePair> terminalPairsMap;
 
     // Maps pairs of tags for unique parts that should be connected to each other, to the status of their connection.
-    Map<PartTagPair, Boolean> terminalConnectionStatusMap;
+    @NonNull private final Map<PartTagPair, Boolean> terminalConnectionStatusMap;
 
     // Maps tags for unique parts that should be physically connected to the chassis, to the status of that connection.
-    Map<PartTag, Boolean> chassisConnectionStatusMap;
+    @NonNull private final Map<PartTag, Boolean> chassisConnectionStatusMap;
 
-    private PartsAssembly(
+    protected PartsAssembly(
             Map<PartTag, Part> partsMap,
-            Map<PartTagPair, TerminalPair> terminalIDPairsMap,
+            Map<PartTagPair, QRCodePair> terminalIDPairsMap,
             Map<PartTagPair, Boolean> terminalConnectionStatusMap,
             Map<PartTag, Boolean> chassisConnectionStatusMap) {
         this.partsMap = partsMap;
@@ -41,14 +43,14 @@ public class PartsAssembly extends AbstractEquatable<PartsAssembly> implements P
         this.chassisConnectionStatusMap = chassisConnectionStatusMap;
     }
 
-    public PartsAssembly(Map<PartTag, Part> pickedPartsMap) {
+    public PartsAssembly(@NonNull Map<PartTag, Part> pickedPartsMap) {
 
         // Get the set of unique part tags
         Set<PartTag> partTags = pickedPartsMap.keySet();
         int size = partTags.size();
 
         // Initialize backing maps
-        partsMap = new HashMap<>(pickedPartsMap);
+        partsMap = Collections.unmodifiableMap(pickedPartsMap);
         terminalPairsMap = new HashMap<>(size);
         terminalConnectionStatusMap = new HashMap<>(size);
         chassisConnectionStatusMap = new HashMap<>(size);
@@ -91,7 +93,7 @@ public class PartsAssembly extends AbstractEquatable<PartsAssembly> implements P
 
                         // Construct new TerminalIDPair value by getting value for current terminal tag from outer terminal IDs map,
                         // and value for current part tag from inner terminal IDs map
-                        terminalPairsMap.put(newKey, new TerminalPair(
+                        terminalPairsMap.put(newKey, new QRCodePair(
                                 thisPartTerminalMap.get(terminalTag),
                                 otherPartTerminalMap.get(partTag)
                                 ));
@@ -107,7 +109,7 @@ public class PartsAssembly extends AbstractEquatable<PartsAssembly> implements P
     // BEGIN PARCELABLE IMPLEMENTATION
 
     protected PartsAssembly(Parcel in) {
-        //Todo
+        this(new HashMap<PartTag, Part>());
     }
 
     @Override
@@ -149,7 +151,7 @@ public class PartsAssembly extends AbstractEquatable<PartsAssembly> implements P
      * @param value - The truth value that the entry in terminalConnectionStatusMap will be updated to reflect if validations pass.
      * @return true if the input {@Code TerminalIDPair} passed validation, indicating that the backing map has been updated to hold the input value; false otherwise.
      */
-    public boolean tryUpdateTerminalConnectionStatus(PartTagPair partTagPair, TerminalPair terminalIDPair, boolean value) {
+    public boolean tryUpdateTerminalConnectionStatus(PartTagPair partTagPair, QRCodePair terminalIDPair, boolean value) {
 
         // Check if the input pair of terminal IDs matches the recorded pair
         if (terminalIDPair.equals(terminalPairsMap.get(partTagPair))) {
@@ -188,7 +190,7 @@ public class PartsAssembly extends AbstractEquatable<PartsAssembly> implements P
     public boolean tryUpdateChassisConnectionStatus(PartTag partTag, ID partID, boolean value) {
 
         // Check if the input part ID matches the recorded ID for the part tag
-        if (partsMap.get(partTag).equals(partID)) {
+        if (partsMap.get(partTag).getID().equals(partID)) {
             chassisConnectionStatusMap.put(partTag, value);
 
             return true;
@@ -213,7 +215,7 @@ public class PartsAssembly extends AbstractEquatable<PartsAssembly> implements P
     public PartsAssembly clone() {
         return new PartsAssembly(
                 new HashMap<PartTag, Part>(partsMap),
-                new HashMap<PartTagPair, TerminalPair>(terminalPairsMap),
+                new HashMap<PartTagPair, QRCodePair>(terminalPairsMap),
                 new HashMap<PartTagPair, Boolean>(terminalConnectionStatusMap),
                 new HashMap<PartTag, Boolean>(chassisConnectionStatusMap));
     }

@@ -6,12 +6,12 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 
 import com.example.afreecar.model.abstraction.AbstractEquatable;
 import com.example.afreecar.model.abstraction.AbstractPerfectHashable;
 import com.example.afreecar.model.abstraction.Equatable;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -61,6 +61,7 @@ public abstract class AbstractChecklist<
     public abstract TImpl clone();
 
     public static abstract class Element<TElement extends AbstractChecklist.Element<TElement>> extends AbstractPerfectHashable<TElement> implements Checklist.Element<TElement, Element<TElement>.DisplayImpl>, Parcelable {
+
         // Breaks if you remove it
         @Override
         public abstract TElement clone();
@@ -84,14 +85,14 @@ public abstract class AbstractChecklist<
 
         public class DisplayImpl extends AbstractPerfectHashable<DisplayImpl> implements Checklist.Element.Display<Element<TElement>.DisplayImpl, TElement> {
 
-            final TElement source;
-            final Boolean isFulfilled;
+            @NonNull final TElement source;
+            @NonNull final Boolean isFulfilled;
 
-            public DisplayImpl(@NonNull TElement source) {
+            public DisplayImpl(TElement source) {
                 this(source, false);
             }
 
-            public DisplayImpl(@NonNull TElement source, @NonNull Boolean isFulfilled) {
+            public DisplayImpl(TElement source, Boolean isFulfilled) {
                 this.source = source;
                 this.isFulfilled = isFulfilled;
             }
@@ -116,7 +117,6 @@ public abstract class AbstractChecklist<
                 return result;
             }
 
-            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public int hashCode() {
                 int hash;
@@ -134,31 +134,44 @@ public abstract class AbstractChecklist<
 
 
     public static abstract class PairableElement<TPair extends PairableElement<TPair, TSingle>, TSingle extends Element<TSingle>> extends Element<TPair> {
-        final TSingle one, two;
+        @NonNull final TSingle one;
+        @Nullable final TSingle two;
 
-        public PairableElement(@NonNull TSingle one) {
+        public PairableElement(TSingle one) {
             this(one, null);
         }
 
-        public PairableElement(@NonNull TSingle one, @Nullable TSingle two) {
-            // Ensures internal sorting of paired elements
-            int comparison = one.compareTo(two);
-            if (comparison == 0) {
-                throw new IllegalArgumentException("Cannot connect a part to itself.");
+        public PairableElement(TSingle one, TSingle two) {
+            if (one == null) {
+                if (two == null) {
+                    throw new InvalidParameterException("Both items cannot be null.");
+                }
+                this.one = two;
+                this.two = one;
             }
-            else if (comparison < 0) {
+            else if (two == null) {
                 this.one = one;
                 this.two = two;
             }
             else {
-                this.one = two;
-                this.two = one;
+                // Ensures internal sorting of paired elements
+                int comparison = one.compareTo(two);
+                if (comparison == 0) {
+                    throw new IllegalArgumentException("Cannot connect a part to itself.");
+                }
+                else if (comparison < 0) {
+                    this.one = one;
+                    this.two = two;
+                }
+                else {
+                    this.one = two;
+                    this.two = one;
+                }
             }
         }
 
         // BEGIN PARCELABLE IMPLEMENTATION
 
-        @RequiresApi(api = Build.VERSION_CODES.M)
         @Override
         public void writeToParcel(Parcel dest, int flags) {
             dest.writeTypedObject(one, flags);
@@ -177,7 +190,6 @@ public abstract class AbstractChecklist<
             return result;
         }
 
-        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
         public int hashCode() {
             int hash;
@@ -186,13 +198,6 @@ public abstract class AbstractChecklist<
 
             return hash;
         }
-
-//        public int compareTo(TPair other) {
-//            int oneComparison = this.one.compareTo(other.one);
-//            return oneComparison == 0
-//                    ? this.two.compareTo(other.two)
-//                    : oneComparison;
-//        }
 
         public boolean isPair() {
             return this.two != null;

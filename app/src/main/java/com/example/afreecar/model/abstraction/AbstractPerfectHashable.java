@@ -1,5 +1,7 @@
 package com.example.afreecar.model.abstraction;
 
+import androidx.annotation.NonNull;
+
 public abstract class AbstractPerfectHashable<TImpl extends AbstractPerfectHashable<TImpl>> extends AbstractHashable<TImpl> implements PerfectHashable<TImpl> {
 
     @Override
@@ -8,12 +10,8 @@ public abstract class AbstractPerfectHashable<TImpl extends AbstractPerfectHasha
     }
 
     @Override
-    public int compareTo(TImpl other) {
+    public int compareTo(@NonNull TImpl other) {
         return this.hashCode() - other.hashCode();
     }
-
-    // Breaks if you remove it
-    @Override
-    public abstract TImpl clone();
 
 }

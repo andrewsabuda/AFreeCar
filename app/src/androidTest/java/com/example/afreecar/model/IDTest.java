@@ -11,7 +11,7 @@ public class IDTest {
 
     private ID testID;
 
-    private static final String ID_STRING = "01234";
+    private static final String ID_STRING = String.valueOf(Math.random());
 
     @Before
     public void setUp() {
@@ -37,10 +37,10 @@ public class IDTest {
         assertNotSame(testID, clone);
     }
 
-//    @Test
-//    public void testHashCode() {
-//        assertEquals(testID.hashCode(), testID.toString().hashCode());
-//    }
+    @Test
+    public void testHashCode() {
+        assertEquals(testID.hashCode(), testID.toString().hashCode());
+    }
 
     @Test
     public void testToString() {
@@ -56,5 +56,15 @@ public class IDTest {
         ID createdFromParcel = ID.CREATOR.createFromParcel(parcel);
 
         assertEquals(testID, createdFromParcel);
+    }
+
+    @Test
+    public void testCompareTo() {
+        assertEquals(0, testID.compareTo(testID));
+        assertEquals(testID.toString().compareTo("asdf"), testID.compareTo(new ID("asdf")));
+        assertTrue(ID.CHASSIS.toString().compareTo(ID_STRING) < 0);
+        assertEquals(testID.compareTo(ID.CHASSIS), -ID.CHASSIS.compareTo(testID));
+        assertTrue(testID.compareTo(ID.CHASSIS) < 0);
+        assertTrue(ID.CHASSIS.compareTo(testID) > 0);
     }
 }

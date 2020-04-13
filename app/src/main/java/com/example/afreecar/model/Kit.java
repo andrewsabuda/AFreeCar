@@ -1,5 +1,7 @@
 package com.example.afreecar.model;
 
+import androidx.annotation.NonNull;
+
 import com.example.afreecar.model.abstraction.AbstractEquatable;
 import com.example.afreecar.model.checklist.PartTag;
 import com.example.afreecar.model.checklist.assembly.Part;
@@ -13,8 +15,9 @@ import java.util.Map;
  */
 public class Kit extends AbstractEquatable<Kit> {
 
-    private final ID kitID;
-    private final Map<PartTag, Part> partsMap;
+
+    @NonNull private final ID kitID;
+    @NonNull private final Map<PartTag, Part> partsMap;
 
     public Kit(ID kitID, Map<PartTag, Part> partsMap) {
         this.kitID = kitID;

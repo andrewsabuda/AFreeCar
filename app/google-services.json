@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "977396460037",
+    "firebase_url": "https://afreecar-9b1ac.firebaseio.com",
+    "project_id": "afreecar-9b1ac",
+    "storage_bucket": "afreecar-9b1ac.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:977396460037:android:126037a0dce8000e8dca6c",
+        "android_client_info": {
+          "package_name": "com.example.afreecar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "977396460037-rgofr8meef3jcjnhqmasitae8o28pt7v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.afreecar",
+            "certificate_hash": "25367ebda16eded20feb223b82f452edd8a7c4c5"
+          }
+        },
+        {
+          "client_id": "977396460037-4oglr19s4bdlgukbuasmnv4jkd3tg068.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxwT6PVgiG3cfR95ojhsLPPzbY03ya8Zs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "977396460037-4oglr19s4bdlgukbuasmnv4jkd3tg068.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

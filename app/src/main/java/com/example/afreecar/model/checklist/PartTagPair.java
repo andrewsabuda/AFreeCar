@@ -1,12 +1,6 @@
 package com.example.afreecar.model.checklist;
 
-import android.os.Build;
 import android.os.Parcel;
-
-import androidx.annotation.RequiresApi;
-
-import com.example.afreecar.model.abstraction.Equatable;
-import com.example.afreecar.model.checklist.assembly.Part;
 
 /**
  * Entity indicating a required connection between two unique parts.
@@ -21,12 +15,10 @@ public class PartTagPair extends AbstractChecklist.PairableElement<PartTagPair, 
 
     // BEGIN PARCELABLE IMPLEMENTATION
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     protected PartTagPair(Parcel in) {
         this(in.readTypedObject(PartTag.CREATOR), in.readTypedObject(PartTag.CREATOR));
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeTypedObject(one, flags);
@@ -39,7 +31,6 @@ public class PartTagPair extends AbstractChecklist.PairableElement<PartTagPair, 
     }
 
     public static final Creator<PartTagPair> CREATOR = new Creator<PartTagPair>() {
-        @RequiresApi(api = Build.VERSION_CODES.M)
         @Override
         public PartTagPair createFromParcel(Parcel in) {
             return new PartTagPair(in);

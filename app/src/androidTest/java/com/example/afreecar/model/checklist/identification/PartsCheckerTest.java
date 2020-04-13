@@ -3,10 +3,8 @@ package com.example.afreecar.model.checklist.identification;
 import android.os.Parcel;
 
 import com.example.afreecar.model.ID;
-import com.example.afreecar.model.Kit;
 import com.example.afreecar.model.KitRequirements;
 import com.example.afreecar.model.checklist.PartTag;
-import com.example.afreecar.model.PartType;
 
 import org.junit.Before;
 import org.junit.Test;

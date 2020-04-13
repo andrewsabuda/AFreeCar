@@ -1,13 +1,10 @@
 package com.example.afreecar.model.checklist;
 
-import android.os.Build;
 import android.os.Parcel;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 
 import com.example.afreecar.model.PartType;
-import com.example.afreecar.model.abstraction.AbstractPerfectHashable;
 
 import java.security.InvalidParameterException;
 
@@ -22,8 +19,8 @@ public class PartTag extends AbstractChecklist.Element<PartTag> {
     public static final String TYPE_FIELD_NAME = "type";
     public static final String ORDINAL_FIELD_NAME = "ordinal";
 
-    private final PartType type;
-    private final Byte ordinal;
+    @NonNull private final PartType type;
+    @NonNull private final Byte ordinal;
 
     public static final int CARDINALITY = PartType.values().length * Byte.MAX_VALUE;
 
@@ -31,7 +28,7 @@ public class PartTag extends AbstractChecklist.Element<PartTag> {
      * @param type - the type of part being described in this tag.
      * @param ordinal - the ID relative to other parts of the same type in a kit.
      */
-    public PartTag(@NonNull PartType type, @NonNull int ordinal) {
+    public PartTag(PartType type, int ordinal) {
 
         if (ordinal < 1) {
             throw new InvalidParameterException("Ordinal must be at least 1");
@@ -47,19 +44,16 @@ public class PartTag extends AbstractChecklist.Element<PartTag> {
 
     // BEGIN PARCELABLE IMPLEMENTATION
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     protected PartTag(Parcel in) {
         this(in.readTypedObject(PartType.CREATOR), in.readByte());
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeTypedObject(type, flags);
         dest.writeByte(ordinal);
     }
 
     public static final Creator<PartTag> CREATOR = new Creator<PartTag>() {
-        @RequiresApi(api = Build.VERSION_CODES.M)
         @Override
         public PartTag createFromParcel(Parcel in) {
             return new PartTag(in);

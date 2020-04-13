@@ -7,14 +7,25 @@ import androidx.annotation.NonNull;
 
 import com.example.afreecar.model.abstraction.AbstractPerfectHashable;
 
+import java.security.InvalidParameterException;
+
 /**
  * Wrapper class for IDs to be read from QR codes, in case we use something besides {@code String}s.
  */
 public class ID extends AbstractPerfectHashable<ID> implements Parcelable {
 
-    private final String id;
+    public static final ID CHASSIS = new ID();
 
-    public ID(@NonNull String id) {
+    @NonNull private final String id;
+
+    private ID() {
+        this.id = "";
+    }
+
+    public ID(String id) {
+        if (id.length() == 0) {
+            throw new InvalidParameterException("The only valid empty ID is that of the chassis, which has no ID.");
+        }
         this.id = id;
     }
 
@@ -63,6 +74,10 @@ public class ID extends AbstractPerfectHashable<ID> implements Parcelable {
         return new ID(toString());
     }
 
+    public Boolean isChassis() {
+        return this.equals(CHASSIS);
+    }
+
     @Override
     public String toString() {
         return id;
@@ -70,6 +85,11 @@ public class ID extends AbstractPerfectHashable<ID> implements Parcelable {
 
     @Override
     public int compareTo(ID other) {
-        return id.compareTo(other.id);
+        int comparison;
+        // Ensures chassis is always higher
+        comparison = this.id.compareTo(other.id);
+        comparison *= this.equals(CHASSIS) || other.equals(CHASSIS) ? -1 : 1;
+
+        return comparison;
     }
 }

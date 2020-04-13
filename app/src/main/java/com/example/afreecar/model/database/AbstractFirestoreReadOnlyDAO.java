@@ -26,7 +26,7 @@ import static com.google.firebase.firestore.FieldPath.documentId;
  */
 public abstract class AbstractFirestoreReadOnlyDAO<TObject> implements ReadOnlyDAO<TObject, String> {
 
-    private final FirebaseFirestore firestore;
+    @NonNull private final FirebaseFirestore firestore;
 
     public AbstractFirestoreReadOnlyDAO(FirebaseFirestore firestore) {
         this.firestore = firestore;
@@ -113,8 +113,6 @@ public abstract class AbstractFirestoreReadOnlyDAO<TObject> implements ReadOnlyD
 
         return daoReadTaskFirestoreList;
     }
-
-    // Abstract methods
 
     public abstract String getCollectionName();
 

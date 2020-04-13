@@ -1,5 +1,7 @@
 package com.example.afreecar.model;
 
+import androidx.annotation.NonNull;
+
 import com.example.afreecar.model.abstraction.AbstractEquatable;
 import com.example.afreecar.model.checklist.PartTag;
 import com.example.afreecar.model.checklist.identification.PartRequirement;
@@ -16,8 +18,8 @@ public class KitRequirements extends AbstractEquatable<KitRequirements> {
     public static final String ID_FIELD_NAME = "id";
     public static final String PART_REQS_FIELD_NAME = "part requirements";
 
-    private final ID kitID;
-    private final Map<PartTag, PartRequirement> partRequirements;
+    @NonNull private final ID kitID;
+    @NonNull private final Map<PartTag, PartRequirement> partRequirements;
 
     public KitRequirements(ID kitID, Map<PartTag, PartRequirement> partRequirements) {
         this.kitID = kitID.clone();
