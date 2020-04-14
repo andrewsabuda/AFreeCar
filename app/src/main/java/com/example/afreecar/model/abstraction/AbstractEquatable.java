@@ -11,6 +11,13 @@ public abstract class AbstractEquatable<TImpl extends AbstractEquatable<TImpl>> 
                     : this == other;
     }
 
+    @Override
+    public boolean equals(TImpl other) {
+        return this == null
+                ? other == null
+                : other != null;
+    }
+
     // Breaks if you remove it
     @Override
     public abstract TImpl clone();

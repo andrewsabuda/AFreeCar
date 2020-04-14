@@ -9,9 +9,12 @@ import com.example.afreecar.model.abstraction.AbstractPerfectHashable;
 
 import java.security.InvalidParameterException;
 
+import javax.annotation.concurrent.Immutable;
+
 /**
  * Wrapper class for IDs to be read from QR codes, in case we use something besides {@code String}s.
  */
+@Immutable
 public class ID extends AbstractPerfectHashable<ID> implements Parcelable {
 
     public static final ID CHASSIS = new ID();
@@ -66,12 +69,21 @@ public class ID extends AbstractPerfectHashable<ID> implements Parcelable {
 
     @Override
     public boolean equals(ID other) {
-        return this.id.equals(other.id);
+        Boolean result;
+        result = super.equals(other);
+        result &= this.id.equals(other.id);
+        return result;
     }
 
     @Override
     public ID clone() {
-        return new ID(toString());
+        ID clone;
+
+        clone = this.equals(CHASSIS)
+                ? CHASSIS
+                : new ID(this.toString());
+
+        return clone;
     }
 
     public Boolean isChassis() {

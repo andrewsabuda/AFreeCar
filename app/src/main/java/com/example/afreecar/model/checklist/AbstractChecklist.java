@@ -1,12 +1,12 @@
 package com.example.afreecar.model.checklist;
 
-import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.afreecar.model.OptionalPair;
 import com.example.afreecar.model.abstraction.AbstractEquatable;
 import com.example.afreecar.model.abstraction.AbstractPerfectHashable;
 import com.example.afreecar.model.abstraction.Equatable;
@@ -133,40 +133,25 @@ public abstract class AbstractChecklist<
 
 
 
-    public static abstract class PairableElement<TPair extends PairableElement<TPair, TSingle>, TSingle extends Element<TSingle>> extends Element<TPair> {
-        @NonNull final TSingle one;
-        @Nullable final TSingle two;
+    public static abstract class PairableElement<TPair extends PairableElement<TPair, TSingle>, TSingle extends Element<TSingle>> extends Element<TPair> implements OptionalPair<TSingle> {
 
-        public PairableElement(TSingle one) {
-            this(one, null);
-        }
+        @NonNull final TSingle one;
+        @NonNull final TSingle two;
 
         public PairableElement(TSingle one, TSingle two) {
-            if (one == null) {
-                if (two == null) {
-                    throw new InvalidParameterException("Both items cannot be null.");
-                }
-                this.one = two;
-                this.two = one;
+
+            // Ensures internal sorting of paired elements
+            int comparison = one.compareTo(two);
+            if (comparison == 0) {
+                throw new IllegalArgumentException("Cannot pair an item with itself.");
             }
-            else if (two == null) {
+            else if (comparison < 0) {
                 this.one = one;
                 this.two = two;
             }
             else {
-                // Ensures internal sorting of paired elements
-                int comparison = one.compareTo(two);
-                if (comparison == 0) {
-                    throw new IllegalArgumentException("Cannot connect a part to itself.");
-                }
-                else if (comparison < 0) {
-                    this.one = one;
-                    this.two = two;
-                }
-                else {
-                    this.one = two;
-                    this.two = one;
-                }
+                this.one = two;
+                this.two = one;
             }
         }
 
@@ -199,8 +184,18 @@ public abstract class AbstractChecklist<
             return hash;
         }
 
-        public boolean isPair() {
+        @Override
+        public Boolean isPair() {
             return this.two != null;
+        }
+
+        @Override
+        public TSingle getOne() {
+            return this.one;
+        }
+
+        public TSingle getTwo() {
+            return this.two;
         }
     }
 }

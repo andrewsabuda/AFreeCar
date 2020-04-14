@@ -8,9 +8,12 @@ import androidx.annotation.NonNull;
 import com.example.afreecar.model.ID;
 import com.example.afreecar.model.checklist.PartTag;
 
+import javax.annotation.concurrent.Immutable;
+
 /**
- * Class containing information about a terminal's QR code ID and its target unique part tag.
+ * Class containing information about a terminal's QR code ID, intended distance from the edge of another terminal, and its target unique part tag.
  */
+@Immutable
 public class Terminal extends AbstractAssemblyItem<Terminal> implements Parcelable {
 
     public static final String COLLECTION_NAME = "Terminals";
@@ -63,7 +66,10 @@ public class Terminal extends AbstractAssemblyItem<Terminal> implements Parcelab
 
     @Override
     public boolean equals(Terminal other) {
-        return super.equals(other) && this.target.equals(other.target);
+        Boolean result;
+        result = super.equals(other);
+        result &= this.target.equals(other.target);
+        return result;
     }
 
     @Override

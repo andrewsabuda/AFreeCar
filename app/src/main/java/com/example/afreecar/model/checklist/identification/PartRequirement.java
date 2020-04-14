@@ -15,10 +15,13 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.annotation.concurrent.Immutable;
+
 /**
  * Class to indicate a specific part required in a kit, and a list of valid part IDs that that may
  * fulfill that requirement.  Intended for use as a wrapper for data passed from the database.
  */
+@Immutable
 public class PartRequirement extends AbstractEquatable<PartRequirement> implements Parcelable {
 
     public static final String COLLECTION_NAME = "PartRequirements";
@@ -33,7 +36,6 @@ public class PartRequirement extends AbstractEquatable<PartRequirement> implemen
      * @param validPartIDs - the set of valid part {@code ID}s for this particular requirement.
      */
     public PartRequirement(@NonNull PartTag partTag, @NonNull Set<ID> validPartIDs) {
-
         if (validPartIDs.size() < 1) {
             throw new InvalidParameterException("The set of valid parts must have at least one element.");
         }
@@ -106,7 +108,11 @@ public class PartRequirement extends AbstractEquatable<PartRequirement> implemen
 
     @Override
     public boolean equals(PartRequirement other) {
-        return this.partTag.equals(other.partTag) && this.validPartIDs.equals(other.validPartIDs);
+        Boolean result;
+        result = super.equals(other);
+        result &= this.partTag.equals(other.partTag);
+        result &= this.validPartIDs.equals(other.validPartIDs);
+        return result;
     }
 
     @Override

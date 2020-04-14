@@ -18,6 +18,7 @@ import java.util.Set;
 /**
  * Class to store information on the users progress towards assembling the complete kit.
  */
+@Deprecated
 public class PartsAssembly extends AbstractEquatable<PartsAssembly> implements Parcelable {
 
     // Maps tags for unique parts to their IDs
@@ -32,7 +33,7 @@ public class PartsAssembly extends AbstractEquatable<PartsAssembly> implements P
     // Maps tags for unique parts that should be physically connected to the chassis, to the status of that connection.
     @NonNull private final Map<PartTag, Boolean> chassisConnectionStatusMap;
 
-    protected PartsAssembly(
+    private PartsAssembly(
             Map<PartTag, Part> partsMap,
             Map<PartTagPair, QRCodePair> terminalIDPairsMap,
             Map<PartTagPair, Boolean> terminalConnectionStatusMap,

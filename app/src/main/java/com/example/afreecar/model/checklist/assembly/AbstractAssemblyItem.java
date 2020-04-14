@@ -11,24 +11,28 @@ import com.example.afreecar.model.abstraction.AbstractEquatable;
 
 import java.util.Objects;
 
-public abstract class AbstractAssemblyItem<T extends AbstractAssemblyItem<T>> extends AbstractEquatable<T> implements AssemblyItem<T>, Parcelable {
+public abstract class AbstractAssemblyItem<TImpl extends AbstractAssemblyItem<TImpl>> extends AbstractQRDistance<TImpl> implements AssemblyItem<TImpl> {
 
     @NonNull private final ID id;
-    @NonNull private final Double qrDistance;
 
     public AbstractAssemblyItem(ID id, Double qrDistance) {
+        super(qrDistance);
         this.id = id.clone();
-        this.qrDistance = Double.valueOf(qrDistance);
+    }
+
+    private AbstractAssemblyItem(Double qrDistance, ID id) {
+        super(qrDistance);
+        this.id = id;
     }
 
     public AbstractAssemblyItem(Parcel in) {
-        this(in.readTypedObject(ID.CREATOR), in.readDouble());
+        this(in.readDouble(), in.readTypedObject(ID.CREATOR));
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
         dest.writeTypedObject(id, flags);
-        dest.writeDouble(qrDistance);
     }
 
     @Override
@@ -37,17 +41,17 @@ public abstract class AbstractAssemblyItem<T extends AbstractAssemblyItem<T>> ex
     }
 
     @Override
-    public Double getQRDistance() {
-        return Double.valueOf(qrDistance);
-    }
+    public boolean equals(TImpl other) {
+        Boolean result;
 
-    @Override
-    public boolean equals(T other) {
-        return this.id.equals(other.getID()) && other.getQRDistance().equals(other.getQRDistance());
+        result = super.equals(other);
+        result &= this.id.equals(other.getID());
+
+        return result;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, qrDistance);
+        return Objects.hash(this.id, this.getQRDistance());
     }
 }

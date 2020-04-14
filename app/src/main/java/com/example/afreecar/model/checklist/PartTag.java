@@ -8,12 +8,18 @@ import com.example.afreecar.model.PartType;
 
 import java.security.InvalidParameterException;
 
+import javax.annotation.concurrent.Immutable;
+
 /**
  * The {@code PartTag} class provides a separate ID type to delineate unique parts within a kit -
  * which may include multiple of the same type - which will be displayed to users when selecting parts.
  * Designed for use as a key in HashMaps as the primary front facing indexer for
  */
+@Immutable
 public class PartTag extends AbstractChecklist.Element<PartTag> {
+
+    public static final PartTag NULL_TAG = new PartTag();
+    public static final int CARDINALITY = (PartType.values().length - 1) * Byte.MAX_VALUE;
 
     public static final String COLLECTION_NAME = "PartTags";
     public static final String TYPE_FIELD_NAME = "type";
@@ -22,7 +28,15 @@ public class PartTag extends AbstractChecklist.Element<PartTag> {
     @NonNull private final PartType type;
     @NonNull private final Byte ordinal;
 
-    public static final int CARDINALITY = PartType.values().length * Byte.MAX_VALUE;
+
+    private PartTag() {
+        this.type = PartType.Null;
+        this.ordinal = 0;
+    }
+
+    public PartTag(PartType type) {
+        this(type, 1);
+    }
 
     /**
      * @param type - the type of part being described in this tag.
@@ -30,10 +44,12 @@ public class PartTag extends AbstractChecklist.Element<PartTag> {
      */
     public PartTag(PartType type, int ordinal) {
 
-        if (ordinal < 1) {
+        if (type == PartType.Null) {
+            throw new InvalidParameterException("Cannot instantiate null tag, must use constant.");
+        }
+        if (ordinal < 1 && type != PartType.Null) {
             throw new InvalidParameterException("Ordinal must be at least 1");
         }
-
         if (ordinal > Byte.MAX_VALUE) {
             throw new InvalidParameterException("Ordinal must be less than " + Byte.MAX_VALUE);
         }
@@ -45,7 +61,8 @@ public class PartTag extends AbstractChecklist.Element<PartTag> {
     // BEGIN PARCELABLE IMPLEMENTATION
 
     protected PartTag(Parcel in) {
-        this(in.readTypedObject(PartType.CREATOR), in.readByte());
+        this.type = in.readTypedObject(PartType.CREATOR);
+        this.ordinal = in.readByte();
     }
 
     public void writeToParcel(Parcel dest, int flags) {

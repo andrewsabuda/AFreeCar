@@ -1,9 +1,14 @@
 package com.example.afreecar.model;
 
+import com.example.afreecar.model.checklist.PartTagPair;
 import com.example.afreecar.model.checklist.assembly.Part;
 import com.example.afreecar.model.checklist.assembly.Terminal;
 import com.example.afreecar.model.checklist.PartTag;
 import com.example.afreecar.model.checklist.identification.PartRequirement;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Class containing static instances of other objects to be used for demo/testing purposes.
@@ -27,18 +32,33 @@ public final class TestConstants {
     public static final ID MOTOR_1_TO_CONTROLLER_TERMINAL_ID = new ID("9");
     public static final ID MOTOR_2_TO_CONTROLLER_TERMINAL_ID = new ID("10");
 
-
-
     // PartTags
     public static final PartTag CONTROLLER_TAG = new PartTag(PartType.Controller, 1);
     public static final PartTag BATTERY_TAG = new PartTag(PartType.Battery, 1);
     public static final PartTag MOTOR_1_TAG = new PartTag(PartType.Motor, 1);
     public static final PartTag MOTOR_2_TAG = new PartTag(PartType.Motor, 2);
 
+    // PartTagPairs
+    public static final PartTagPair CONTROLLER_CHASSIS_PAIR_TAG = new PartTagPair(CONTROLLER_TAG);
+    public static final PartTagPair BATTERY_CHASSIS_PAIR_TAG = new PartTagPair(BATTERY_TAG);
+    public static final PartTagPair MOTOR_1_CHASSIS_PAIR_TAG = new PartTagPair(MOTOR_1_TAG);
+    public static final PartTagPair MOTOR_2_CHASSIS_PAIR_TAG = new PartTagPair(MOTOR_2_TAG);
+
+    // PartsRequirements
+    public static final PartRequirement CONTROLLER_REQ = new PartRequirement(CONTROLLER_TAG, CONTROLLER_ID);
+    public static final PartRequirement BATTERY_REQ = new PartRequirement(BATTERY_TAG, BATTERY_ID);
+    public static final PartRequirement MOTOR_1_REQ = new PartRequirement(MOTOR_1_TAG, MOTOR_1_ID, MOTOR_2_ID);
+    public static final PartRequirement MOTOR_2_REQ = new PartRequirement(MOTOR_2_TAG, MOTOR_1_ID, MOTOR_2_ID);
+
+    // KitRequirements
+    public static final KitRequirements KIT_REQUIREMENTS = new KitRequirements(KIT_ID, CONTROLLER_REQ, BATTERY_REQ, MOTOR_1_REQ, MOTOR_2_REQ);
+
+
+
     // Basic ideal distance from QR code to edge of part/terminal
     public static final Double STANDARD_QR_DISTANCE = 0.5;
 
-    // TerminalInfo
+    // Terminals
     public static final Terminal CONTROLLER_TO_BATTERY_TERMINAL = new Terminal(CONTROLLER_TO_BATTERY_TERMINAL_ID, STANDARD_QR_DISTANCE, BATTERY_TAG);
     public static final Terminal CONTROLLER_TO_MOTOR_1_TERMINAL = new Terminal(CONTROLLER_TO_MOTOR_1_TERMINAL_ID, STANDARD_QR_DISTANCE, MOTOR_1_TAG);
     public static final Terminal CONTROLLER_TO_MOTOR_2_TERMINAL = new Terminal(CONTROLLER_TO_MOTOR_2_TERMINAL_ID, STANDARD_QR_DISTANCE, MOTOR_2_TAG);
@@ -46,8 +66,7 @@ public final class TestConstants {
     public static final Terminal MOTOR_1_TO_CONTROLLER_TERMINAL = new Terminal(MOTOR_1_TO_CONTROLLER_TERMINAL_ID, STANDARD_QR_DISTANCE, CONTROLLER_TAG);
     public static final Terminal MOTOR_2_TO_CONTROLLER_TERMINAL = new Terminal(MOTOR_2_TO_CONTROLLER_TERMINAL_ID, STANDARD_QR_DISTANCE, CONTROLLER_TAG);
 
-
-    // Part
+    // Parts
     public static final Part CONTROLLER = new Part(
             CONTROLLER_ID,
             STANDARD_QR_DISTANCE,
@@ -74,13 +93,19 @@ public final class TestConstants {
             MOTOR_2_TO_CONTROLLER_TERMINAL
     );
 
-    // PartsRequirements
-    public static final PartRequirement CONTROLLER_REQ = new PartRequirement(CONTROLLER_TAG, CONTROLLER_ID);
-    public static final PartRequirement BATTERY_REQ = new PartRequirement(BATTERY_TAG, BATTERY_ID);
-    public static final PartRequirement MOTOR_1_REQ = new PartRequirement(MOTOR_1_TAG, MOTOR_1_ID, MOTOR_2_ID);
-    public static final PartRequirement MOTOR_2_REQ = new PartRequirement(MOTOR_2_TAG, MOTOR_1_ID, MOTOR_2_ID);
+    public static final Map<PartTag, Part> STANDARD_PICKED_PARTS_MAP;
+    static {
+        Map<PartTag, Part> partsMap;
+        partsMap = new HashMap<>(4);
 
-    // Kit
-    public static final KitRequirements KIT_REQUIREMENTS = new KitRequirements(KIT_ID, CONTROLLER_REQ, BATTERY_REQ, MOTOR_1_REQ, MOTOR_2_REQ);
+        partsMap.put(CONTROLLER_TAG, CONTROLLER);
+        partsMap.put(BATTERY_TAG, BATTERY);
+        partsMap.put(MOTOR_1_TAG, MOTOR_2);
+        partsMap.put(MOTOR_2_TAG, MOTOR_1);
 
+        STANDARD_PICKED_PARTS_MAP = Collections.unmodifiableMap(partsMap);
+    }
+
+    // EKit
+    public static final EKit E_KIT = new EKit(KIT_ID, STANDARD_PICKED_PARTS_MAP);
 }

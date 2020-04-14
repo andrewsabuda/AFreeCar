@@ -22,29 +22,29 @@ import java.util.Set;
  * Class used to retrieve a set of parts for the input eKit ID,
  * and then construct a collection of valid scanned QR code IDs from those sets.
  */
-public class PartsChecker extends AbstractChecklist<PartsChecker, PartTag, ID> implements Parcelable {
+public class RequirementsChecklist extends AbstractChecklist<RequirementsChecklist, PartTag, ID> implements Parcelable {
 
-    private Map<PartTag, ID> pickedPartsMap;
-    private Map<PartTag, PartRequirement> validPartsMap;
+    @NonNull private final Map<PartTag, ID> pickedPartIDsMap;
+    @NonNull private final Map<PartTag, PartRequirement> validPartsMap;
 
-    private PartsChecker(@NonNull Map<PartTag, ID> pickedPartsMap, @NonNull Map<PartTag, PartRequirement> validPartsMap) {
-        this.pickedPartsMap = pickedPartsMap;
+    private RequirementsChecklist(Map<PartTag, ID> pickedPartIDsMap, Map<PartTag, PartRequirement> validPartsMap) {
+        this.pickedPartIDsMap = pickedPartIDsMap;
         this.validPartsMap = validPartsMap;
     }
 
-    public PartsChecker(@NonNull KitRequirements kitRequirements) {
+    public RequirementsChecklist(@NonNull KitRequirements kitRequirements) {
 
         validPartsMap = Collections.unmodifiableMap(kitRequirements.getPartRequirements());
-        pickedPartsMap = new HashMap<PartTag, ID>(validPartsMap.size());
+        pickedPartIDsMap = new HashMap<PartTag, ID>(validPartsMap.size());
 
         for (PartTag tag: validPartsMap.keySet()) {
-            pickedPartsMap.put(tag, null);
+            pickedPartIDsMap.put(tag, null);
         }
     }
 
     // BEGIN PARCELABLE IMPLEMENTATION
 
-    protected PartsChecker(Parcel in){
+    protected RequirementsChecklist(Parcel in){
         int length = in.readInt();
 
         PartTag[] partTags = new PartTag[length];
@@ -60,12 +60,12 @@ public class PartsChecker extends AbstractChecklist<PartsChecker, PartTag, ID> i
             validIDSets[i] = in.createTypedArray(ID.CREATOR);
         }
 
-        pickedPartsMap = new HashMap<PartTag, ID>(length);
+        pickedPartIDsMap = new HashMap<PartTag, ID>(length);
         validPartsMap = new HashMap<PartTag, PartRequirement>(length);
 
         for (i = 0; i < length; i++) {
             PartTag currentTag = partTags[i];
-            pickedPartsMap.put(partTags[i], pickedIDs[i]);
+            pickedPartIDsMap.put(partTags[i], pickedIDs[i]);
 
             Set<ID> tempValidIDSet = new HashSet<ID>(length);
             ID[] readValidIDArray = validIDSets[i];
@@ -93,7 +93,7 @@ public class PartsChecker extends AbstractChecklist<PartsChecker, PartTag, ID> i
 
         int i;
         for (i = 0; i < length; i++) {
-            pickedIDs[i] = pickedPartsMap.get(partTags[i]); // Put entries of pickedPartsMap in same order as keys
+            pickedIDs[i] = pickedPartIDsMap.get(partTags[i]); // Put entries of pickedPartIDsMap in same order as keys
 
             Set<ID> tempPickedIDSet = validPartsMap.get(partTags[i]).getValidPartIDs();
             validIDs[i] = tempPickedIDSet.toArray(new ID[tempPickedIDSet.size()]); // Ditto for validPartsMap
@@ -108,15 +108,15 @@ public class PartsChecker extends AbstractChecklist<PartsChecker, PartTag, ID> i
         }
     }
 
-    public static final Creator<PartsChecker> CREATOR = new Creator<PartsChecker>() {
+    public static final Creator<RequirementsChecklist> CREATOR = new Creator<RequirementsChecklist>() {
         @Override
-        public PartsChecker createFromParcel(Parcel in) {
-            return new PartsChecker(in);
+        public RequirementsChecklist createFromParcel(Parcel in) {
+            return new RequirementsChecklist(in);
         }
 
         @Override
-        public PartsChecker[] newArray(int size) {
-            return new PartsChecker[size];
+        public RequirementsChecklist[] newArray(int size) {
+            return new RequirementsChecklist[size];
         }
     };
 
@@ -133,7 +133,7 @@ public class PartsChecker extends AbstractChecklist<PartsChecker, PartTag, ID> i
     @Override
     public List<PartTag> getElements() {
         ArrayList<PartTag> partTags;
-        partTags = new ArrayList<PartTag>(pickedPartsMap.keySet());
+        partTags = new ArrayList<PartTag>(pickedPartIDsMap.keySet());
         Collections.sort(partTags);
         return partTags;
     }
@@ -156,7 +156,7 @@ public class PartsChecker extends AbstractChecklist<PartsChecker, PartTag, ID> i
     @Override
     public Boolean tryFulfill(PartTag partTag, ID partID) {
         if (this.doesFulfill(partTag, partID)) {
-            pickedPartsMap.put(partTag, partID);
+            pickedPartIDsMap.put(partTag, partID);
             return true;
         }
 
@@ -169,7 +169,7 @@ public class PartsChecker extends AbstractChecklist<PartsChecker, PartTag, ID> i
      */
     @Override
     public Boolean isFulfilled(PartTag partTag) {
-        return pickedPartsMap.get(partTag) != null;
+        return pickedPartIDsMap.get(partTag) != null;
     }
 
     // END CHECKLIST IMPLEMENTATION
@@ -179,7 +179,7 @@ public class PartsChecker extends AbstractChecklist<PartsChecker, PartTag, ID> i
      * @return The part ID currently selected for this PartTag
      */
     public ID getPickedPartID(PartTag partTag) {
-        return pickedPartsMap.get(partTag);
+        return pickedPartIDsMap.get(partTag);
     }
 
     /**
@@ -197,7 +197,7 @@ public class PartsChecker extends AbstractChecklist<PartsChecker, PartTag, ID> i
      */
     public boolean tryRemovePart(PartTag partTag) {
         if (isFulfilled(partTag)) {
-            pickedPartsMap.put(partTag, null);
+            pickedPartIDsMap.put(partTag, null);
             return true;
         }
 
@@ -205,19 +205,23 @@ public class PartsChecker extends AbstractChecklist<PartsChecker, PartTag, ID> i
     }
 
     @Override
-    public PartsChecker clone() {
-        return new PartsChecker(new HashMap<PartTag, ID>(pickedPartsMap), new HashMap<PartTag, PartRequirement>(validPartsMap));
+    public RequirementsChecklist clone() {
+        return new RequirementsChecklist(new HashMap<PartTag, ID>(pickedPartIDsMap), new HashMap<PartTag, PartRequirement>(validPartsMap));
     }
 
     @Override
-    public boolean equals(PartsChecker other) {
-        return this.validPartsMap.equals(other.validPartsMap) && this.pickedPartsMap.equals(other.pickedPartsMap);
+    public boolean equals(RequirementsChecklist other) {
+        Boolean result;
+        result = super.equals(other);
+        result &= this.validPartsMap.equals(other.validPartsMap);
+        result &= this.pickedPartIDsMap.equals(other.pickedPartIDsMap);
+        return result;
     }
 
     /**
-     * @return a copy of the pickedPartsMap.
+     * @return a copy of the pickedPartIDsMap.
      */
     public Map<PartTag, ID> clonePickedParts() {
-        return Collections.unmodifiableMap(pickedPartsMap);
+        return Collections.unmodifiableMap(pickedPartIDsMap);
     }
 }

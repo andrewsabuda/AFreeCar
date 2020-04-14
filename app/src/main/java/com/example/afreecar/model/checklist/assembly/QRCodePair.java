@@ -4,22 +4,24 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import com.example.afreecar.model.abstraction.AbstractHashable;
 import com.example.afreecar.model.ID;
+import com.example.afreecar.model.abstraction.Hashable;
 
 import java.util.Objects;
+
+import javax.annotation.concurrent.Immutable;
 
 /**
  * Class describing the intended distance between either the
  */
-public class QRCodePair extends AbstractHashable<QRCodePair> implements Parcelable {
+@Immutable
+public class QRCodePair extends AbstractQRDistance<QRCodePair> implements Hashable<QRCodePair>, Parcelable {
 
     @NonNull private final ID one, two;
-    @NonNull private final Double qrDistance;
 
-    private QRCodePair(@NonNull ID one, @NonNull ID two, Double qrDistance) {
+    private QRCodePair(@NonNull Double qrDistance, @NonNull ID one, @NonNull ID two) {
+        super(qrDistance);
+
         // Ensures sorting of parts internally
         int comparison = one.compareTo(two);
         if (comparison == 0) {
@@ -33,29 +35,27 @@ public class QRCodePair extends AbstractHashable<QRCodePair> implements Parcelab
             this.one = two.clone();
             this.two = one.clone();
         }
-
-        this.qrDistance = Double.valueOf(qrDistance);
     }
 
     public QRCodePair(@NonNull Terminal terminalOne, @NonNull Terminal terminalTwo) {
-        this(terminalOne.getID(), terminalTwo.getID(),terminalOne.getQRDistance() + terminalTwo.getQRDistance());
+        this(terminalOne.getQRDistance() + terminalTwo.getQRDistance(), terminalOne.getID(), terminalTwo.getID());
     }
 
     public QRCodePair(@NonNull Part part) {
-        this(part.getID(), ID.CHASSIS, part.getQRDistance());
+        this(part.getQRDistance(), part.getID(), ID.CHASSIS);
     }
 
     // BEGIN PARCELABLE IMPLEMENTATION
 
     protected QRCodePair(@NonNull Parcel in) {
-        this(in.readTypedObject(ID.CREATOR), in.readTypedObject(ID.CREATOR), in.readDouble());
+        this(in.readDouble(), in.readTypedObject(ID.CREATOR), in.readTypedObject(ID.CREATOR));
     }
 
     @Override
     public void writeToParcel(@NonNull Parcel dest, @NonNull int flags) {
+        super.writeToParcel(dest, flags);
         dest.writeTypedObject(one, flags);
         dest.writeTypedObject(two, flags);
-        dest.writeDouble(qrDistance);
     }
 
     @Override
@@ -79,16 +79,20 @@ public class QRCodePair extends AbstractHashable<QRCodePair> implements Parcelab
 
     @Override
     public int hashCode() {
-        return Objects.hash(one, two, qrDistance);
+        return Objects.hash(this.one, this.two, this.getQRDistance());
     }
 
     @Override
     public QRCodePair clone() {
-        return new QRCodePair(one, two, qrDistance);
+        return new QRCodePair(this.getQRDistance(), one, two);
     }
 
     @Override
     public boolean equals(QRCodePair other) {
-        return this.one.equals(other.one) && this.two.equals(other.two);
+        Boolean result;
+        result = super.equals(other);
+        result &= this.one.equals(other.one);
+        result &= this.two.equals(other.two);
+        return result;
     }
 }

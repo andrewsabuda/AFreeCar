@@ -2,12 +2,19 @@ package com.example.afreecar.model.checklist;
 
 import android.os.Parcel;
 
+import javax.annotation.concurrent.Immutable;
+
 /**
  * Entity indicating a required connection between two unique parts.
  */
+@Immutable
 public class PartTagPair extends AbstractChecklist.PairableElement<PartTagPair, PartTag> {
 
     private static int CARDINALITY = ((Double) Math.pow(PartTag.CARDINALITY, 2)).intValue();
+
+    public PartTagPair(PartTag one) {
+        super(one, PartTag.NULL_TAG);
+    }
 
     public PartTagPair(PartTag one, PartTag two) {
         super(one, two);
@@ -17,17 +24,6 @@ public class PartTagPair extends AbstractChecklist.PairableElement<PartTagPair, 
 
     protected PartTagPair(Parcel in) {
         this(in.readTypedObject(PartTag.CREATOR), in.readTypedObject(PartTag.CREATOR));
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeTypedObject(one, flags);
-        dest.writeTypedObject(two, flags);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
     }
 
     public static final Creator<PartTagPair> CREATOR = new Creator<PartTagPair>() {

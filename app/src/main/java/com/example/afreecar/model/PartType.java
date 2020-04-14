@@ -9,7 +9,8 @@ import android.os.Parcelable;
 public enum PartType implements Parcelable {
     Controller,
     Battery,
-    Motor;
+    Motor,
+    Null;
 
     @Override
     public int describeContents() {

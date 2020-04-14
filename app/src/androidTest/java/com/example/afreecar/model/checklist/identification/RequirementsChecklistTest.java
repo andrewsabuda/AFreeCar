@@ -19,9 +19,9 @@ import static com.example.afreecar.model.TestConstants.*;
 
 import static org.junit.Assert.*;
 
-public class PartsCheckerTest {
+public class RequirementsChecklistTest {
 
-    private PartsChecker testChecker;
+    private RequirementsChecklist testChecker;
 
     private static final PartTag[] PART_TAGS;
     static {
@@ -82,7 +82,7 @@ public class PartsCheckerTest {
 
     @Before
     public void setUp() {
-        testChecker = new PartsChecker(new KitRequirements(KIT_ID, new HashSet<PartRequirement>(Arrays.asList(getPartRequirements()))));
+        testChecker = new RequirementsChecklist(new KitRequirements(KIT_ID, new HashSet<PartRequirement>(Arrays.asList(getPartRequirements()))));
     }
 
     @Test
@@ -98,7 +98,7 @@ public class PartsCheckerTest {
         testChecker.writeToParcel(parcel, testChecker.describeContents());
         parcel.setDataPosition(0);
 
-        PartsChecker createdFromParcel = PartsChecker.CREATOR.createFromParcel(parcel);
+        RequirementsChecklist createdFromParcel = RequirementsChecklist.CREATOR.createFromParcel(parcel);
 
         assertEquals(testChecker, createdFromParcel);
     }
@@ -192,12 +192,12 @@ public class PartsCheckerTest {
 
     @Test
     public void testEquals() {
-        assertEquals(new PartsChecker(KIT_REQUIREMENTS), testChecker);
+        assertEquals(new RequirementsChecklist(KIT_REQUIREMENTS), testChecker);
     }
 
     @Test
     public void testClone() {
-        PartsChecker clone = testChecker.clone();
+        RequirementsChecklist clone = testChecker.clone();
         assertEquals(testChecker, clone);
         assertNotSame(testChecker, clone);
 

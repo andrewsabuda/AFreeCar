@@ -1,6 +1,5 @@
 package com.example.afreecar.model.checklist.assembly;
 
-import android.os.Build;
 import android.os.Parcel;
 
 import androidx.annotation.NonNull;
@@ -13,12 +12,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.annotation.concurrent.Immutable;
+
 /**
  * Class intended to represent a collection of IDs of a part's terminals,
  * indexed by the unique part tag whose respective terminal they are intended to connect to,
  * as well as a boolean indicating whether or not the part must be physically connected to the chassis.
  * Intended as wrapper for data passed from the database.
  */
+@Immutable
 public class Part extends AbstractAssemblyItem<Part> {
 
     @NonNull private final Map<PartTag, Terminal> terminalMap;

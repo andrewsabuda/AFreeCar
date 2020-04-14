@@ -6,7 +6,12 @@ public abstract class AbstractPerfectHashable<TImpl extends AbstractPerfectHasha
 
     @Override
     public boolean equals(TImpl other) {
-        return this.hashCode() == other.hashCode();
+        Boolean result;
+
+        result = super.equals(other);
+        result &= this.hashCode() == other.hashCode();
+
+        return result;
     }
 
     @Override

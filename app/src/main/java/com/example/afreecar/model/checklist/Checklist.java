@@ -54,7 +54,7 @@ public interface Checklist<
      * Attempts to fulfill the input element's requirements using the input fulfillment object.
      * @param element The element to be fulfilled.
      * @param fulfillObject The object that will be used to fulfill the element's requirements, if valid.
-     * @return Whether or not the element was fulfilled, thus changing the state of the checklist.
+     * @return The new status of the element's fulfill.
      */
     Boolean tryFulfill(TElement element, TFulfill fulfillObject);
 
